@@ -1,506 +1,593 @@
-HTML
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OM Interactive Learning Platform</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root { --primary: #1e40af; --secondary: #3b82f6; --accent: #f59e0b; }
-        body { font-family: 'Sarabun', sans-serif; background: #f1f5f9; }
-        .heading-font { font-family: 'Prompt', sans-serif; }
-        .sidebar-item:hover { background: rgba(59, 130, 246, 0.1); color: var(--primary); }
-        .active-link { border-r-4 border-blue-600 bg-blue-50 text-blue-700 font-bold; }
-        .nested-menu { display: none; }
-        .nested-menu.active { display: block; }
-        .card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
-        .formula { font-family: 'Courier New', Courier, monospace; background: #1e293b; color: #38bdf8; padding: 1rem; border-radius: 0.5rem; text-align: center; }
-        .note-box { border-left: 4px solid var(--accent); background: #fffbeb; padding: 1rem; margin: 1rem 0; }
-        .case-study { border: 2px dashed #10b981; background: #f0fdf4; padding: 1.5rem; border-radius: 1rem; }
-        html { scroll-behavior: smooth; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OM Learning Hub | การจัดการการดำเนินงาน</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0f2a4a; --navy2:#163a63; --teal:#0e8f83; --teal-soft:#e3f4f2;
+  --amber:#e8a33d; --amber-soft:#fdf3e3; --ink:#22303f; --muted:#5b6b7c;
+  --paper:#f5f7fa; --card:#ffffff; --line:#e2e8f0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Sarabun',sans-serif;background:var(--paper);color:var(--ink);line-height:1.75}
+h1,h2,h3,h4,.hf{font-family:'Prompt',sans-serif}
+a{text-decoration:none;color:inherit}
+.view{display:none}
+.view.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== Top bar ===== */
+.topbar{position:sticky;top:0;z-index:100;background:var(--navy);color:#fff;padding:.7rem 1.2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.topbar .brand{font-family:'Prompt';font-weight:700;font-size:1.05rem;cursor:pointer}
+.topbar .brand span{color:var(--amber)}
+.topnav{display:flex;gap:.25rem;margin-left:auto;flex-wrap:wrap}
+.topnav button{background:transparent;border:none;color:#cdd9e6;font-family:'Prompt';font-size:.9rem;padding:.45rem .9rem;border-radius:.5rem;cursor:pointer}
+.topnav button:hover{background:rgba(255,255,255,.12);color:#fff}
+.topnav button.on{background:var(--teal);color:#fff;font-weight:600}
+.topnav button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+/* ===== HUB ===== */
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 55%,#0d4d56 100%);color:#fff;padding:4rem 1.5rem 5.5rem;text-align:center;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:auto 0 -1px 0;height:70px;background:var(--paper);clip-path:polygon(0 100%,100% 100%,100% 0)}
+.flowmotif{display:flex;align-items:center;justify-content:center;gap:.7rem;font-family:'Prompt';font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;color:#9fd8d1;margin-bottom:1.2rem}
+.flowmotif .chip{border:1px solid rgba(159,216,209,.5);padding:.2rem .7rem;border-radius:99px}
+.flowmotif .chip.mid{background:var(--teal);border-color:var(--teal);color:#fff}
+.hero h1{font-size:clamp(1.9rem,5vw,3.2rem);font-weight:800;margin-bottom:.4rem}
+.hero .en{color:var(--amber);font-weight:500;font-size:clamp(1rem,2.5vw,1.35rem);letter-spacing:.05em}
+.hero p.sub{max-width:640px;margin:1.2rem auto 0;color:#c8d6e4;font-size:1.02rem}
+.hero .author{margin-top:1.6rem;font-size:.9rem;color:#9db2c7}
+.hub{max-width:1080px;margin:-2.5rem auto 4rem;padding:0 1.2rem;position:relative;z-index:2}
+.hubgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.2rem}
+.hubcard{background:var(--card);border:1px solid var(--line);border-radius:1.1rem;padding:1.8rem 1.5rem;box-shadow:0 8px 24px -12px rgba(15,42,74,.25);display:flex;flex-direction:column;gap:.7rem;transition:transform .2s,box-shadow .2s}
+.hubcard:hover{transform:translateY(-4px);box-shadow:0 16px 32px -12px rgba(15,42,74,.35)}
+.hubcard .emoji{font-size:2.2rem}
+.hubcard h2{font-size:1.15rem;color:var(--navy)}
+.hubcard p{font-size:.9rem;color:var(--muted);flex:1}
+.hubcard .go{align-self:flex-start;background:var(--navy);color:#fff;border:none;font-family:'Prompt';font-weight:600;font-size:.88rem;padding:.55rem 1.2rem;border-radius:.6rem;cursor:pointer;transition:background .2s}
+.hubcard .go:hover{background:var(--teal)}
+.hubcard .go:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.hubcard.accent .go{background:var(--teal)}
+.hubcard.accent .go:hover{background:var(--navy)}
+
+/* ===== BOOK ===== */
+.booklayout{display:flex;max-width:1280px;margin:0 auto}
+.sidebar{width:290px;flex-shrink:0;background:var(--card);border-right:1px solid var(--line);padding:1.2rem .9rem;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.sidebar::-webkit-scrollbar{width:6px}.sidebar::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:9px}
+.sb-title{font-family:'Prompt';font-weight:700;color:var(--navy);font-size:.95rem;padding:.4rem .6rem .8rem;border-bottom:2px solid var(--teal);margin-bottom:.6rem}
+.sb-group>button{width:100%;display:flex;justify-content:space-between;align-items:center;background:none;border:none;font-family:'Prompt';font-weight:600;font-size:.9rem;color:var(--ink);padding:.55rem .6rem;border-radius:.5rem;cursor:pointer;text-align:left}
+.sb-group>button:hover{background:var(--teal-soft);color:var(--teal)}
+.sb-group>button .arr{transition:transform .2s;font-size:.7rem;color:var(--teal)}
+.sb-group.open>button .arr{transform:rotate(180deg)}
+.sb-sub{display:none;padding-left:.8rem;border-left:2px solid var(--line);margin:.15rem 0 .4rem .8rem}
+.sb-group.open .sb-sub{display:block}
+.sb-sub a{display:block;font-size:.83rem;color:var(--muted);padding:.35rem .5rem;border-radius:.4rem}
+.sb-sub a:hover{color:var(--teal);background:var(--teal-soft)}
+.sb-sub a.tool{color:var(--teal);font-weight:600}
+.bookmain{flex:1;padding:2rem 1.4rem 4rem;max-width:860px;min-width:0}
+.chip-ch{display:inline-block;background:var(--teal);color:#fff;font-family:'Prompt';font-size:.8rem;font-weight:600;padding:.25rem 1rem;border-radius:99px;margin-bottom:.5rem}
+.bookmain h2.chtitle{font-size:1.7rem;color:var(--navy);margin-bottom:1.2rem}
+.bcard{background:var(--card);border:1px solid var(--line);border-radius:1rem;padding:1.8rem;margin-bottom:1.6rem;box-shadow:0 2px 8px -4px rgba(15,42,74,.12)}
+.bcard h3{color:var(--teal);font-size:1.12rem;margin-bottom:.9rem;padding-left:.8rem;border-left:4px solid var(--amber)}
+.bcard p{text-align:justify;margin-bottom:.8rem;font-size:.96rem}
+.bcard p:last-child{margin-bottom:0}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem;margin-top:1rem}
+.mini{background:var(--paper);border:1px solid var(--line);border-radius:.8rem;padding:1rem;text-align:center}
+.mini.hl{background:var(--teal-soft);border:2px solid var(--teal)}
+.mini h4{font-size:.92rem;color:var(--navy);margin:.3rem 0}
+.mini p{font-size:.78rem;color:var(--muted);text-align:center;margin:0}
+.mini .ic{font-size:1.4rem}
+table.tb{width:100%;border-collapse:collapse;font-size:.88rem;margin-top:.8rem}
+table.tb th{background:var(--navy);color:#fff;font-family:'Prompt';font-weight:600;padding:.65rem .8rem;text-align:left}
+table.tb td{padding:.65rem .8rem;border-bottom:1px solid var(--line);vertical-align:top}
+table.tb tr:nth-child(even) td{background:var(--paper)}
+.tbwrap{overflow-x:auto}
+.formula{font-family:'Courier New',monospace;background:var(--navy);color:#7dd6cc;padding:.9rem 1rem;border-radius:.6rem;text-align:center;font-size:.9rem;margin:.5rem 0}
+.notebox{border-left:4px solid var(--amber);background:var(--amber-soft);padding:1rem 1.2rem;border-radius:0 .7rem .7rem 0;margin:1rem 0;font-size:.92rem}
+.flowbar{display:flex;flex-wrap:wrap;align-items:stretch;gap:.8rem;background:var(--navy);border-radius:1rem;padding:1.2rem;color:#fff;margin:1rem 0}
+.flowbar .cell{flex:1;min-width:200px}
+.flowbar .cell h5{font-family:'Prompt';color:#8fd0c9;margin-bottom:.4rem;font-size:.9rem}
+.flowbar .cell.core{background:var(--teal);border-radius:.8rem;padding:.8rem;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.flowbar .cell.core h5{color:var(--amber);letter-spacing:.1em}
+.flowbar ul{list-style:disc;padding-left:1.1rem;font-size:.78rem;opacity:.85}
+.tags{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.6rem;margin-top:1rem}
+.tags .tag{background:var(--paper);border:1px solid var(--line);border-radius:.6rem;padding:.6rem .8rem;font-size:.8rem}
+.tag b{color:var(--teal)}
+.case{border:2px dashed var(--teal);background:var(--teal-soft);border-radius:1rem;padding:1.4rem;margin-bottom:1.4rem}
+.case h4{color:var(--navy);margin-bottom:.5rem}
+.case p{font-style:italic;font-size:.92rem;text-align:justify}
+
+/* ===== TOOL cards ===== */
+.toolwrap{max-width:900px;margin:0 auto;padding:2.2rem 1.2rem 4rem}
+.toolwrap>h2{color:var(--navy);font-size:1.6rem;margin-bottom:.4rem}
+.toolwrap>p.lead{color:var(--muted);margin-bottom:1.8rem}
+.tool{background:var(--card);border:1px solid var(--line);border-radius:1rem;padding:1.7rem;margin-bottom:1.6rem;box-shadow:0 2px 8px -4px rgba(15,42,74,.12)}
+.tool h3{color:var(--navy);margin-bottom:.3rem;font-size:1.1rem}
+.tool h3 .bdg{display:inline-block;background:var(--amber-soft);color:#a3691a;font-size:.72rem;padding:.15rem .6rem;border-radius:99px;margin-left:.5rem;vertical-align:middle}
+.tool p.d{font-size:.87rem;color:var(--muted);margin-bottom:1rem}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.9rem;margin-bottom:1rem}
+.fields label{font-size:.8rem;font-weight:700;color:var(--ink);display:block;margin-bottom:.25rem}
+.fields input{width:100%;padding:.55rem .7rem;border:1.5px solid var(--line);border-radius:.55rem;font-family:'Sarabun';font-size:.95rem}
+.fields input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(14,143,131,.15)}
+.btn{background:var(--teal);color:#fff;border:none;font-family:'Prompt';font-weight:600;font-size:.9rem;padding:.6rem 1.4rem;border-radius:.6rem;cursor:pointer}
+.btn:hover{background:var(--navy)}
+.btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.result{margin-top:1rem;background:var(--teal-soft);border:1px solid var(--teal);border-radius:.7rem;padding:1rem 1.2rem;display:none}
+.result.show{display:block}
+.result .big{font-family:'Prompt';font-weight:800;font-size:1.7rem;color:var(--teal)}
+.result small{color:var(--muted)}
+.err{color:#b3261e;font-size:.83rem;margin-top:.5rem;display:none}
+
+/* ===== QUIZ ===== */
+.quizwrap{max-width:760px;margin:0 auto;padding:2.2rem 1.2rem 4rem}
+.quizwrap>h2{color:var(--navy);font-size:1.6rem;margin-bottom:.4rem}
+.q{background:var(--card);border:1px solid var(--line);border-radius:1rem;padding:1.4rem 1.6rem;margin-bottom:1.1rem}
+.q h4{font-size:.98rem;margin-bottom:.8rem;color:var(--ink)}
+.q h4 .no{color:var(--teal);font-weight:800;margin-right:.4rem}
+.opt{display:block;padding:.55rem .8rem;border:1.5px solid var(--line);border-radius:.6rem;margin-bottom:.5rem;font-size:.9rem;cursor:pointer;transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--teal)}
+.opt input{margin-right:.6rem;accent-color:var(--teal)}
+.q.graded .opt.correct{border-color:var(--teal);background:var(--teal-soft)}
+.q.graded .opt.wrongpick{border-color:#d05a4e;background:#fdecea}
+.q .why{display:none;font-size:.83rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:.6rem;margin-top:.4rem}
+.q.graded .why{display:block}
+.scorebox{background:var(--navy);color:#fff;border-radius:1rem;padding:1.6rem;text-align:center;display:none;margin-top:1.4rem}
+.scorebox.show{display:block}
+.scorebox .sc{font-family:'Prompt';font-weight:800;font-size:2.4rem;color:var(--amber)}
+
+footer{background:var(--navy);color:#9db2c7;text-align:center;padding:1.6rem 1rem;font-size:.82rem}
+footer b{color:#fff}
+
+@media(max-width:900px){
+  .sidebar{position:fixed;left:0;top:52px;transform:translateX(-100%);transition:transform .25s;z-index:90;box-shadow:4px 0 20px rgba(0,0,0,.15)}
+  .sidebar.open{transform:none}
+  .sbtoggle{display:inline-flex!important}
+}
+.sbtoggle{display:none;background:var(--amber);color:var(--navy);border:none;border-radius:.5rem;font-family:'Prompt';font-weight:700;font-size:.8rem;padding:.4rem .8rem;cursor:pointer;align-items:center;gap:.4rem}
+</style>
 </head>
-<body class="flex min-h-screen">
+<body>
 
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-80 bg-white border-r border-slate-200 overflow-y-auto transition-transform lg:translate-x-0 -translate-x-full">
-        <div class="p-6 border-b">
-            <h2 class="heading-font text-xl font-bold text-blue-900">OM Platform</h2>
-            <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold mt-1">Interactive Textbook</p>
+<!-- ===== TOP BAR ===== -->
+<header class="topbar">
+  <div class="brand" onclick="go('hub')">OM <span>Learning Hub</span></div>
+  <button class="sbtoggle" id="sbtoggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ สารบัญ</button>
+  <nav class="topnav" aria-label="เมนูหลัก">
+    <button data-v="hub" class="on" onclick="go('hub')">หน้าแรก</button>
+    <button data-v="book" onclick="go('book')">📘 ตำรา</button>
+    <button data-v="tools" onclick="go('tools')">🧮 เครื่องมือคำนวณ</button>
+    <button data-v="quiz" onclick="go('quiz')">🧠 แบบฝึกหัด</button>
+  </nav>
+</header>
+
+<!-- ============ VIEW: HUB ============ -->
+<section id="v-hub" class="view active">
+  <div class="hero">
+    <div class="flowmotif" aria-hidden="true">
+      <span class="chip">Inputs</span> → <span class="chip mid">Process</span> → <span class="chip">Outputs</span>
+    </div>
+    <h1>การจัดการการดำเนินงาน</h1>
+    <div class="en hf">Operations Management — Interactive Learning Platform</div>
+    <p class="sub">สื่อการเรียนรู้ออนไลน์ประกอบรายวิชาการจัดการการดำเนินงาน เรียนรู้ทฤษฎีจากตำรา ทดลองคำนวณด้วยเครื่องมือปฏิสัมพันธ์ และทดสอบความเข้าใจด้วยแบบฝึกหัด บูรณาการบริบทอุตสาหกรรมภาคตะวันออกเฉียงเหนือและลุ่มน้ำโขง</p>
+    <div class="author">ผู้ช่วยศาสตราจารย์ ดร.คลอเคลีย วจนะวิชากร · มหาวิทยาลัยราชภัฏอุบลราชธานี</div>
+  </div>
+
+  <div class="hub">
+    <div class="hubgrid">
+      <div class="hubcard">
+        <div class="emoji">📘</div>
+        <h2>ตำราการจัดการการดำเนินงาน</h2>
+        <p>เปิดอ่านเนื้อหาแบบเต็ม ครอบคลุมแนวคิด OM ระบบการแปรรูป โซ่อุปทาน ผลิตภาพ และการประยุกต์ในบริบทอีสาน</p>
+        <button class="go" onclick="go('book')">เปิดตำรา</button>
+      </div>
+      <div class="hubcard accent">
+        <div class="emoji">🧮</div>
+        <h2>เครื่องมือคำนวณปฏิสัมพันธ์</h2>
+        <p>ทดลองคำนวณผลิตภาพ จุดคุ้มทุน (BEP) ปริมาณสั่งซื้อประหยัด (EOQ) และประสิทธิผลโดยรวมของเครื่องจักร (OEE)</p>
+        <button class="go" onclick="go('tools')">เข้าใช้เครื่องมือ</button>
+      </div>
+      <div class="hubcard">
+        <div class="emoji">🧠</div>
+        <h2>แบบฝึกหัดทบทวน</h2>
+        <p>แบบทดสอบปรนัย 10 ข้อ พร้อมเฉลยและคำอธิบาย ตรวจคะแนนอัตโนมัติเพื่อประเมินความเข้าใจด้วยตนเอง</p>
+        <button class="go" onclick="go('quiz')">เริ่มทำแบบฝึกหัด</button>
+      </div>
+      <div class="hubcard">
+        <div class="emoji">🌾</div>
+        <h2>กรณีศึกษาบริบทท้องถิ่น</h2>
+        <p>กรณีศึกษาวิสาหกิจชุมชนอีสานและโลจิสติกส์การค้าชายแดน GMS เชื่อมโยงทฤษฎีสู่การปฏิบัติจริงในพื้นที่</p>
+        <button class="go" onclick="go('book');setTimeout(()=>document.getElementById('ch10').scrollIntoView(),80)">อ่านกรณีศึกษา</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VIEW: BOOK ============ -->
+<section id="v-book" class="view">
+  <div class="booklayout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sb-title">สารบัญตำรา</div>
+      <div class="sb-group open">
+        <button onclick="this.parentElement.classList.toggle('open')">บทที่ 1 แนวคิดการจัดการ <span class="arr">▾</span></button>
+        <div class="sb-sub">
+          <a href="#ch1-1" onclick="closeSb()">1.1 ความหมายและขอบเขต</a>
+          <a href="#ch1-2" onclick="closeSb()">1.2 วิวัฒนาการของ OM</a>
+          <a href="#ch1-3" onclick="closeSb()">1.3 ระบบการแปรรูป</a>
+          <a href="#ch1-4" onclick="closeSb()">1.4 สินค้า vs บริการ</a>
+          <a href="#ch1-5" onclick="closeSb()">1.5 บทบาทในโซ่อุปทาน</a>
+          <a href="#ch1-6" onclick="closeSb()">1.6 ผลิตภาพและการวัดผล</a>
+          <a href="#ch1-7" onclick="closeSb()">1.7 บริบทอุตสาหกรรมอีสาน</a>
         </div>
-
-        <nav class="p-4">
-            <div class="mb-4">
-                <a href="#cover" class="flex items-center p-3 text-slate-700 rounded-lg hover:bg-slate-50 transition">
-                    <i class="fa-solid fa-house mr-3 text-blue-600"></i>
-                    <span class="heading-font font-medium">หน้าแรกและคำนำ</span>
-                </a>
-            </div>
-
-            <div class="mb-2">
-                <button onclick="toggleNested('menu1')" class="w-full flex items-center justify-between p-3 text-slate-700 rounded-lg hover:bg-slate-50 transition">
-                    <span class="heading-font font-semibold text-blue-900">1. แนวคิดการจัดการ</span>
-                    <i class="fa-solid fa-chevron-down text-xs text-blue-600"></i>
-                </button>
-                <div id="menu1" class="nested-menu active pl-6 mt-1 space-y-1">
-                    <a href="#ch1-1" class="block p-2 text-sm text-slate-600 hover:text-blue-600 border-l border-slate-200 pl-3">1.1 ความหมายและขอบเขต</a>
-                    <a href="#ch1-2" class="block p-2 text-sm text-slate-600 hover:text-blue-600 border-l border-slate-200 pl-3">1.2 วิวัฒนาการของ OM</a>
-                    <a href="#ch1-3" class="block p-2 text-sm text-slate-600 hover:text-blue-600 border-l border-slate-200 pl-3">1.3 ระบบการแปรรูป</a>
-                    <a href="#ch1-4" class="block p-2 text-sm text-slate-600 hover:text-blue-600 border-l border-slate-200 pl-3">1.4 สินค้า vs บริการ</a>
-                    <a href="#ch1-5" class="block p-2 text-sm text-slate-600 hover:text-blue-600 border-l border-slate-200 pl-3">1.5 บทบาทในโซ่อุปทาน</a>
-                    <a href="#ch1-6" class="block p-2 text-sm text-slate-600 hover:text-blue-600 border-l border-slate-200 pl-3">1.6 ผลิตภาพและการวัดผล</a>
-                    <a href="#ch1-7" class="block p-2 text-sm text-slate-600 hover:text-blue-600 border-l border-slate-200 pl-3">1.7 บริบทอุตสาหกรรมอีสาน</a>
-                    <a href="#ch1-calc" class="block p-2 text-sm text-blue-600 font-bold border-l border-slate-200 pl-3"><i class="fa-solid fa-calculator mr-1"></i> Interactive: คำนวณผลิตภาพ</a>
-                </div>
-            </div>
-
-            <div class="mb-2">
-                <button onclick="toggleNested('menu2')" class="w-full flex items-center justify-between p-3 text-slate-700 rounded-lg hover:bg-slate-50 transition">
-                    <span class="heading-font font-semibold">2. กลยุทธ์การดำเนินงาน</span>
-                    <i class="fa-solid fa-chevron-down text-xs"></i>
-                </button>
-                <div id="menu2" class="nested-menu pl-6 mt-1 space-y-1">
-                    <a href="#ch2-1" class="block p-2 text-sm text-slate-500 hover:text-blue-600">2.1 กลยุทธ์และการแข่งขัน</a>
-                    <a href="#ch2-2" class="block p-2 text-sm text-slate-500 hover:text-blue-600">2.2 มิติการแข่งขัน 4 ด้าน</a>
-                    <a href="#ch2-3" class="block p-2 text-sm text-slate-500 hover:text-blue-600">2.3 การวิเคราะห์ IFE Matrix</a>
-                </div>
-            </div>
-
-            <div class="mb-2">
-                <button onclick="toggleNested('menu3')" class="w-full flex items-center justify-between p-3 text-slate-700 rounded-lg hover:bg-slate-50 transition">
-                    <span class="heading-font font-semibold">3. กระบวนการผลิต</span>
-                    <i class="fa-solid fa-chevron-down text-xs"></i>
-                </button>
-                <div id="menu3" class="nested-menu pl-6 mt-1 space-y-1">
-                    <a href="#ch3-1" class="block p-2 text-sm text-slate-500 hover:text-blue-600">3.1 ประเภทกระบวนการ</a>
-                    <a href="#ch3-2" class="block p-2 text-sm text-slate-500 hover:text-blue-600">3.2 เมทริกซ์ผลิตภัณฑ์</a>
-                    <a href="#ch3-calc" class="block p-2 text-sm text-blue-600 font-bold"><i class="fa-solid fa-calculator mr-1"></i> คำนวณจุดคุ้มทุน</a>
-                </div>
-            </div>
-
-            <div class="mb-2">
-                <button onclick="toggleNested('menu4')" class="w-full flex items-center justify-between p-3 text-slate-700 rounded-lg hover:bg-slate-50 transition">
-                    <span class="heading-font font-semibold">4. การวางผัง (Layout)</span>
-                    <i class="fa-solid fa-chevron-down text-xs"></i>
-                </button>
-                <div id="menu4" class="nested-menu pl-6 mt-1 space-y-1">
-                    <a href="#ch4-1" class="block p-2 text-sm text-slate-500 hover:text-blue-600">4.1 ประเภทของผัง</a>
-                    <a href="#ch4-2" class="block p-2 text-sm text-slate-500 hover:text-blue-600">4.2 การจัดสมดุลสายการผลิต</a>
-                </div>
-            </div>
-
-            <div class="mb-2">
-                <button onclick="toggleNested('menu7')" class="w-full flex items-center justify-between p-3 text-slate-700 rounded-lg hover:bg-slate-50 transition">
-                    <span class="heading-font font-semibold">7. สินค้าคงคลัง</span>
-                    <i class="fa-solid fa-chevron-down text-xs"></i>
-                </button>
-                <div id="menu7" class="nested-menu pl-6 mt-1 space-y-1">
-                    <a href="#ch7-1" class="block p-2 text-sm text-slate-500 hover:text-blue-600">7.1 บทบาทและต้นทุน</a>
-                    <a href="#ch7-calc" class="block p-2 text-sm text-blue-600 font-bold"><i class="fa-solid fa-calculator mr-1"></i> คำนวณ EOQ</a>
-                    <a href="#ch7-3" class="block p-2 text-sm text-slate-500 hover:text-blue-600">7.3 การจัดประเภท ABC</a>
-                </div>
-            </div>
-
-            <div class="mb-2">
-                <button onclick="toggleNested('menu9')" class="w-full flex items-center justify-between p-3 text-slate-700 rounded-lg hover:bg-slate-50 transition">
-                    <span class="heading-font font-semibold">9. การผลิตแบบลีน</span>
-                    <i class="fa-solid fa-chevron-down text-xs"></i>
-                </button>
-                <div id="menu9" class="nested-menu pl-6 mt-1 space-y-1">
-                    <a href="#ch9-1" class="block p-2 text-sm text-slate-500 hover:text-blue-600">9.1 ความสูญเปล่า 7+1</a>
-                    <a href="#ch9-2" class="block p-2 text-sm text-slate-500 hover:text-blue-600">9.2 ระบบ Kanban & JIT</a>
-                    <a href="#ch9-calc" class="block p-2 text-sm text-blue-600 font-bold"><i class="fa-solid fa-calculator mr-1"></i> คำนวณ OEE</a>
-                </div>
-            </div>
-        </nav>
+      </div>
+      <div class="sb-group">
+        <button onclick="this.parentElement.classList.toggle('open')">บทที่ 3 กระบวนการผลิต <span class="arr">▾</span></button>
+        <div class="sb-sub">
+          <a href="#ch3" onclick="closeSb()">3.x การวิเคราะห์จุดคุ้มทุน</a>
+          <a class="tool" href="#" onclick="go('tools');return false">🧮 เครื่องคำนวณ BEP</a>
+        </div>
+      </div>
+      <div class="sb-group">
+        <button onclick="this.parentElement.classList.toggle('open')">บทที่ 10 บูรณาการลุ่มน้ำโขง <span class="arr">▾</span></button>
+        <div class="sb-sub">
+          <a href="#ch10" onclick="closeSb()">กรณีศึกษาวิสาหกิจชุมชน</a>
+          <a href="#ch10-trend" onclick="closeSb()">ทิศทางอุตสาหกรรม 5.0</a>
+        </div>
+      </div>
+      <div class="sb-group">
+        <button onclick="go('tools')">🧮 เครื่องมือคำนวณทั้งหมด</button>
+      </div>
+      <div class="sb-group">
+        <button onclick="go('quiz')">🧠 แบบฝึกหัดทบทวน</button>
+      </div>
     </aside>
 
-    <main class="lg:ml-80 flex-1 p-4 lg:p-10 max-w-5xl">
-        
-        <section id="cover" class="mb-20 pt-10">
-            <div class="card p-10 text-center bg-gradient-to-br from-blue-900 to-indigo-900 text-white">
-                <h1 class="heading-font text-4xl lg:text-6xl font-bold mb-4">การจัดการการดำเนินงาน</h1>
-                <p class="text-xl lg:text-2xl text-blue-200 mb-8 Sarabun">Operations Management</p>
-                <div class="h-1 w-32 bg-yellow-500 mx-auto mb-8"></div>
-                <p class="text-lg font-medium Sarabun">ผู้ช่วยศาสตราจารย์ ดร.คลอเคลีย วจนะวิชากร</p>
-                <p class="text-sm opacity-80 Sarabun">มหาวิทยาลัยราชภัฏอุบลราชธานี</p>
-            </div>
-            
-            <div class="note-box mt-8">
-                <h3 class="heading-font font-bold text-lg mb-2"><i class="fa-solid fa-quote-left mr-2"></i>คำนำ</h3>
-                <p class="text-slate-600 text-justify">ตำราอิเล็กทรอนิกส์ปฏิสัมพันธ์เล่มนี้ เรียบเรียงขึ้นอย่างเป็นระบบเพื่อใช้ประกอบการเรียนการสอนรายวิชาการจัดการการดำเนินงาน โดยมุ่งเน้นให้ผู้เรียนเข้าใจโครงสร้างระบบการแปรรูป เครื่องมือการบริหารเชิงปริมาณ ตลอดจนสามารถนำกรอบแนวคิดระดับสากลไปประยุกต์และบูรณาการเพื่อยกระดับขีดความสามารถการแข่งขันของวิสาหกิจและห่วงโซ่คุณค่าในบริบทอุตสาหกรรมท้องถิ่นภาคตะวันออกเฉียงเหนือและภูมิภาคลุ่มน้ำโขงได้อย่างยั่งยืน</p>
-            </div>
-        </section>
+    <main class="bookmain">
+      <div class="notebox">
+        <b class="hf">คำนำ</b><br>
+        ตำราอิเล็กทรอนิกส์ปฏิสัมพันธ์เล่มนี้ เรียบเรียงขึ้นอย่างเป็นระบบเพื่อใช้ประกอบการเรียนการสอนรายวิชาการจัดการการดำเนินงาน โดยมุ่งเน้นให้ผู้เรียนเข้าใจโครงสร้างระบบการแปรรูป เครื่องมือการบริหารเชิงปริมาณ ตลอดจนสามารถนำกรอบแนวคิดระดับสากลไปประยุกต์และบูรณาการเพื่อยกระดับขีดความสามารถการแข่งขันของวิสาหกิจและห่วงโซ่คุณค่าในบริบทอุตสาหกรรมท้องถิ่นภาคตะวันออกเฉียงเหนือและภูมิภาคลุ่มน้ำโขงได้อย่างยั่งยืน
+      </div>
 
-        <section id="ch1" class="mb-20 border-t pt-10">
-            <div class="flex items-center mb-6">
-                <span class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm heading-font mr-3">บทที่ 1</span>
-                <h2 class="heading-font text-3xl font-bold text-slate-800">แนวคิดเกี่ยวกับการจัดการการดำเนินงาน</h2>
-            </div>
+      <span class="chip-ch">บทที่ 1</span>
+      <h2 class="chtitle">แนวคิดเกี่ยวกับการจัดการการดำเนินงาน</h2>
 
-            <div id="ch1-1" class="card p-8 mb-8">
-                <h3 class="heading-font text-xl font-bold text-blue-700 mb-4"><i class="fa-solid fa-circle-info mr-2"></i>1.1 ความหมายและขอบเขตของการจัดการการดำเนินงาน</h3>
-                <p class="text-slate-700 leading-relaxed mb-4 text-justify">
-                    <strong>การจัดการการดำเนินงาน (Operations Management: OM)</strong> หมายถึง กระบวนการในการออกแบบ การวางแผน การดำเนินการควบคุม และการปรับปรุงระบบการแปรสภาพหรือแปรรูปทรัพยากรและปัจจัยนำเข้า (Inputs) ให้กลายเป็นผลผลิต (Outputs) ในรูปของสินค้าและบริการอย่างมีประสิทธิภาพ (Efficiency) และประสิทธิผล (Effectiveness) เพื่อสร้างมูลค่าเพิ่ม (Value-added) ให้แก่องค์กรและผู้มีส่วนได้ส่วนเสีย
-                </p>
-                <p class="text-slate-700 leading-relaxed mb-4 text-justify">
-                    ในโครงสร้างการบริหารธุรกิจทั่วไปองค์กรจะขับเคลื่อนด้วย <strong>3 หน้าที่หลัก (Core Functions)</strong> ที่มีความสัมพันธ์และต้องประสานงานร่วมกันอย่างใกล้ชิด ได้แก่:
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mt-6">
-                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
-                        <i class="fa-solid fa-chart-line text-blue-600 text-2xl mb-2"></i>
-                        <h4 class="font-bold text-slate-800">1. การตลาด (Marketing)</h4>
-                        <p class="text-xs text-slate-500 mt-1">ทำหน้าที่สร้างอุปสงค์ (Demand Generation) สื่อสารสารสนเทศ และค้นหาความต้องการของลูกค้าเพื่อนำส่งต่อให้องค์กร</p>
-                    </div>
-                    <div class="p-4 bg-blue-50 rounded-xl ring-2 ring-blue-600">
-                        <i class="fa-solid fa-gears text-blue-700 text-2xl mb-2"></i>
-                        <h4 class="font-bold text-blue-900">2. การดำเนินงาน (Operations)</h4>
-                        <p class="text-xs text-blue-700 mt-1">ทำหน้าที่สร้างสินค้าและบริการ (Supply Fulfillment) แปลงทรัพยากรให้เกิดคุณค่าและผลิตภัณฑ์จริงตามที่ตลาดต้องการ</p>
-                    </div>
-                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
-                        <i class="fa-solid fa-coins text-blue-600 text-2xl mb-2"></i>
-                        <h4 class="font-bold text-slate-800">3. การเงิน (Finance)</h4>
-                        <p class="text-xs text-slate-500 mt-1">ทำหน้าที่บริหารเงินทุน (Capital Allocation) จัดสรรงบประมาณ วิเคราะห์ความคุ้มค่าการลงทุน และดูแลกระแสเงินสด</p>
-                    </div>
-                </div>
-            </div>
+      <div class="bcard" id="ch1-1">
+        <h3>1.1 ความหมายและขอบเขตของการจัดการการดำเนินงาน</h3>
+        <p><strong>การจัดการการดำเนินงาน (Operations Management: OM)</strong> หมายถึง กระบวนการในการออกแบบ การวางแผน การดำเนินการควบคุม และการปรับปรุงระบบการแปรสภาพหรือแปรรูปทรัพยากรและปัจจัยนำเข้า (Inputs) ให้กลายเป็นผลผลิต (Outputs) ในรูปของสินค้าและบริการอย่างมีประสิทธิภาพ (Efficiency) และประสิทธิผล (Effectiveness) เพื่อสร้างมูลค่าเพิ่ม (Value-added) ให้แก่องค์กรและผู้มีส่วนได้ส่วนเสีย</p>
+        <p>ในโครงสร้างการบริหารธุรกิจทั่วไป องค์กรจะขับเคลื่อนด้วย <strong>3 หน้าที่หลัก (Core Functions)</strong> ที่มีความสัมพันธ์และต้องประสานงานร่วมกันอย่างใกล้ชิด ได้แก่</p>
+        <div class="grid3">
+          <div class="mini"><div class="ic">📈</div><h4>1. การตลาด (Marketing)</h4><p>สร้างอุปสงค์ (Demand Generation) สื่อสารสารสนเทศ และค้นหาความต้องการของลูกค้าเพื่อนำส่งต่อให้องค์กร</p></div>
+          <div class="mini hl"><div class="ic">⚙️</div><h4>2. การดำเนินงาน (Operations)</h4><p>สร้างสินค้าและบริการ (Supply Fulfillment) แปลงทรัพยากรให้เกิดคุณค่าและผลิตภัณฑ์จริงตามที่ตลาดต้องการ</p></div>
+          <div class="mini"><div class="ic">💰</div><h4>3. การเงิน (Finance)</h4><p>บริหารเงินทุน (Capital Allocation) จัดสรรงบประมาณ วิเคราะห์ความคุ้มค่าการลงทุน และดูแลกระแสเงินสด</p></div>
+        </div>
+      </div>
 
-            <div id="ch1-2" class="card p-8 mb-8">
-                <h3 class="heading-font text-xl font-bold text-blue-700 mb-4"><i class="fa-solid fa-timeline mr-2"></i>1.2 วิวัฒนาการของการจัดการการดำเนินงาน</h3>
-                <p class="text-slate-700 leading-relaxed mb-4 text-justify">
-                    การจัดการการดำเนินงานมีพัฒนาการที่สอดคล้องกับการเปลี่ยนแปลงทางเทคโนโลยีและระเบียบเศรษฐกิจโลก โดยสามารถสรุปแนวคิดหลักและสำนักคิดสำคัญที่มีอิทธิพลต่อยุคสมัยต่าง ๆ ได้ดังนี้:
-                </p>
-                <div class="overflow-x-auto mt-4">
-                    <table class="w-full text-left border-collapse text-sm">
-                        <thead>
-                            <tr class="bg-blue-900 text-white font-semibold">
-                                <th class="p-3 rounded-tl-lg">ยุคสมัย / แนวคิด</th>
-                                <th class="p-3">บุคคลสำคัญ / ผู้บุกเบิก</th>
-                                <th class="p-3 rounded-tr-lg">จุดเน้นและการประยุกต์ใช้</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-slate-700">
-                            <tr class="border-b bg-slate-50">
-                                <td class="p-3 font-semibold">การจัดการแบบวิทยาศาสตร์<br><span class="text-xs text-slate-400">(Scientific Management)</span></td>
-                                <td class="p-3">Frederick W. Taylor<br>Frank & Lillian Gilbreth</td>
-                                <td class="p-3">ศึกษาเวลาและการเคลื่อนไหว (Time and Motion Study) เพื่อหา "วิธีทำงานที่ดีที่สุดวิธีเดียว" (The One Best Way) และกำหนดมาตรฐานงาน</td>
-                            </tr>
-                            <tr class="border-b bg-white">
-                                <td class="p-3 font-semibold">การผลิตมวลรวม<br><span class="text-xs text-slate-400">(Mass Production Era)</span></td>
-                                <td class="p-3">Henry Ford<br>Eli Whitney</td>
-                                <td class="p-3">ริเริ่มสายการประกอบเคลื่อนที่ (Moving Assembly Line) และใช้ชิ้นส่วนที่เปลี่ยนทดแทนกันได้ ผลิตสินค้ามาตรฐานเดียวกันจำนวนมาก ต้นทุนต่ำ</td>
-                            </tr>
-                            <tr class="border-b bg-slate-50">
-                                <td class="p-3 font-semibold">ยุคความสัมพันธ์มนุษย์<br><span class="text-xs text-slate-400">(Human Relations Movement)</span></td>
-                                <td class="p-3">Elton Mayo<br>(Hawthorne Studies)</td>
-                                <td class="p-3">มุ่งเน้นความสำคัญของปัจจัยทางจิตวิทยา สังคม กลุ่มเพื่อนร่วมงาน และความพึงพอใจในงานที่มีผลต่อประสิทธิภาพการผลิต</td>
-                            </tr>
-                            <tr class="border-b bg-white">
-                                <td class="p-3 font-semibold">การวิจัยดำเนินงาน<br><span class="text-xs text-slate-400">(Operations Research)</span></td>
-                                <td class="p-3">กลุ่มนักวิทยาศาสตร์ทหาร<br>และนักคณิตศาสตร์</td>
-                                <td class="p-3">ประยุกต์ใช้โมเดลทางคณิตศาสตร์ สถิติ และระบบคอมพิวเตอร์เชิงปริมาณมาแก้ปัญหาซับซ้อน เช่น Linear Programming และ PERT/CPM</td>
-                            </tr>
-                            <tr class="border-b bg-slate-50">
-                                <td class="p-3 font-semibold">การปฏิวัติคุณภาพและระบบลีน<br><span class="text-xs text-slate-400">(Quality & Lean Era)</span></td>
-                                <td class="p-3">W. Edwards Deming<br>Taiichi Ohno (Toyota)</td>
-                                <td class="p-3">การบริหารคุณภาพทั่วทั้งองค์กร (TQM) และระบบการผลิตของโตโยต้า (TPS) มุ่งขจัดความสูญเปล่า (Waste) ผลิตแบบทันเวลาพอดี (JIT)</td>
-                            </tr>
-                            <tr class="border-b bg-white">
-                                <td class="p-3 font-semibold">การดำเนินงานดิจิทัล<br><span class="text-xs text-slate-400">(Industry 4.0 / 5.0)</span></td>
-                                <td class="p-3">สถาบันเทคโนโลยีและ<br>กลุ่มพันธมิตรระดับโลก</td>
-                                <td class="p-3">ใช้ AI, Big Data, IoT, และระบบอัตโนมัติ ยุค 5.0 เพิ่มมิติการยึดมนุษย์เป็นศูนย์กลาง (Human-centric) ความยืดหยุ่น และความยั่งยืน</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+      <div class="bcard" id="ch1-2">
+        <h3>1.2 วิวัฒนาการของการจัดการการดำเนินงาน</h3>
+        <p>การจัดการการดำเนินงานมีพัฒนาการที่สอดคล้องกับการเปลี่ยนแปลงทางเทคโนโลยีและระเบียบเศรษฐกิจโลก โดยสามารถสรุปแนวคิดหลักและสำนักคิดสำคัญที่มีอิทธิพลต่อยุคสมัยต่าง ๆ ได้ดังนี้</p>
+        <div class="tbwrap"><table class="tb">
+          <thead><tr><th>ยุคสมัย / แนวคิด</th><th>บุคคลสำคัญ / ผู้บุกเบิก</th><th>จุดเน้นและการประยุกต์ใช้</th></tr></thead>
+          <tbody>
+            <tr><td><b>การจัดการแบบวิทยาศาสตร์</b><br><small>(Scientific Management)</small></td><td>Frederick W. Taylor<br>Frank &amp; Lillian Gilbreth</td><td>ศึกษาเวลาและการเคลื่อนไหว (Time and Motion Study) เพื่อหา "วิธีทำงานที่ดีที่สุดวิธีเดียว" (The One Best Way) และกำหนดมาตรฐานงาน</td></tr>
+            <tr><td><b>การผลิตมวลรวม</b><br><small>(Mass Production Era)</small></td><td>Henry Ford<br>Eli Whitney</td><td>ริเริ่มสายการประกอบเคลื่อนที่ (Moving Assembly Line) และใช้ชิ้นส่วนที่เปลี่ยนทดแทนกันได้ ผลิตสินค้ามาตรฐานเดียวกันจำนวนมาก ต้นทุนต่ำ</td></tr>
+            <tr><td><b>ยุคความสัมพันธ์มนุษย์</b><br><small>(Human Relations Movement)</small></td><td>Elton Mayo<br>(Hawthorne Studies)</td><td>มุ่งเน้นความสำคัญของปัจจัยทางจิตวิทยา สังคม กลุ่มเพื่อนร่วมงาน และความพึงพอใจในงานที่มีผลต่อประสิทธิภาพการผลิต</td></tr>
+            <tr><td><b>การวิจัยดำเนินงาน</b><br><small>(Operations Research)</small></td><td>กลุ่มนักวิทยาศาสตร์ทหารและนักคณิตศาสตร์</td><td>ประยุกต์ใช้โมเดลทางคณิตศาสตร์ สถิติ และระบบคอมพิวเตอร์เชิงปริมาณมาแก้ปัญหาซับซ้อน เช่น Linear Programming และ PERT/CPM</td></tr>
+            <tr><td><b>การปฏิวัติคุณภาพและระบบลีน</b><br><small>(Quality &amp; Lean Era)</small></td><td>W. Edwards Deming<br>Taiichi Ohno (Toyota)</td><td>การบริหารคุณภาพทั่วทั้งองค์กร (TQM) และระบบการผลิตของโตโยต้า (TPS) มุ่งขจัดความสูญเปล่า (Waste) ผลิตแบบทันเวลาพอดี (JIT)</td></tr>
+            <tr><td><b>การดำเนินงานดิจิทัล</b><br><small>(Industry 4.0 / 5.0)</small></td><td>สถาบันเทคโนโลยีและกลุ่มพันธมิตรระดับโลก</td><td>ใช้ AI, Big Data, IoT และระบบอัตโนมัติ ยุค 5.0 เพิ่มมิติการยึดมนุษย์เป็นศูนย์กลาง (Human-centric) ความยืดหยุ่น และความยั่งยืน</td></tr>
+          </tbody>
+        </table></div>
+      </div>
 
-            <div id="ch1-3" class="card p-8 mb-8">
-                <h3 class="heading-font text-xl font-bold text-blue-700 mb-4"><i class="fa-solid fa-diagram-project mr-2"></i>1.3 ระบบการแปรรูป (Transformation System)</h3>
-                <p class="text-slate-700 leading-relaxed mb-4 text-justify">
-                    หัวใจของการดำเนินงานคือการมององค์กรในรูปแบบระบบเปิดที่มีกระบวนการแปรสภาพองค์ประกอบต่าง ๆ โดยมีโครงสร้างหลัก 3 ส่วนพร้อมส่วนควบคุมการป้อนกลับ ดังแผนภาพด้านล่าง:
-                </p>
-                <div class="flex flex-col lg:flex-row items-center gap-8 bg-slate-900 p-6 rounded-2xl text-white">
-                    <div class="text-center flex-1">
-                        <p class="text-blue-400 font-bold mb-2"><i class="fa-solid fa-arrow-right-to-bracket mr-1"></i> ปัจจัยนำเข้า (Inputs)</p>
-                        <ul class="text-xs space-y-1 opacity-70 text-left list-disc list-inside">
-                            <li><strong>ทรัพยากรที่ถูกแปลง:</strong> วัตถุดิบ, ข้อมูล, ตัวลูกค้า</li>
-                            <li><strong>ทรัพยากรที่เป็นตัวแปลง:</strong> แรงงาน/พนักงาน, เครื่องจักร, ทุน, อาคารสถานที่</li>
-                        </ul>
-                    </div>
-                    <i class="fa-solid fa-arrow-right hidden lg:block text-slate-500 text-xl"></i>
-                    <div class="text-center flex-1 bg-blue-800 p-4 rounded-xl border border-blue-400 shadow-lg">
-                        <p class="font-bold uppercase tracking-widest text-yellow-400"><i class="fa-solid fa-gears mr-1"></i> Process</p>
-                        <span class="text-xs">กระบวนการแปรรูป/แปรสภาพ</span>
-                    </div>
-                    <i class="fa-solid fa-arrow-right hidden lg:block text-slate-500 text-xl"></i>
-                    <div class="text-center flex-1">
-                        <p class="text-emerald-400 font-bold mb-2"><i class="fa-solid fa-arrow-right-from-bracket mr-1"></i> ผลผลิต (Outputs)</p>
-                        <ul class="text-xs space-y-1 opacity-70 text-left list-disc list-inside">
-                            <li><strong>สินค้า (Goods):</strong> จับต้องได้, เก็บได้</li>
-                            <li><strong>บริการ (Services):</strong> จับต้องไม่ได้, บริโภคทันที</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="mt-6 border-t pt-4">
-                    <p class="text-sm font-bold text-slate-700 mb-2">ประเภทของการแปรรูปในระบบดำเนินงาน:</p>
-                    <ul class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
-                        <li class="bg-slate-100 p-2 rounded-lg"><strong class="text-blue-700">1. ทางกายภาพ (Physical):</strong> การเปลี่ยนรูปทรงและเนื้อสาร เช่น โรงงานผลิตรถยนต์ โรงงานทอผ้า</li>
-                        <li class="bg-slate-100 p-2 rounded-lg"><strong class="text-blue-700">2. ด้านสถานที่ (Locational):</strong> การเปลี่ยนตำแหน่งที่ตั้ง เช่น ธุรกิจขนส่ง โลจิสติกส์ คลังสินค้า</li>
-                        <li class="bg-slate-100 p-2 rounded-lg"><strong class="text-blue-700">3. การแลกเปลี่ยน (Exchange):</strong> การเปลี่ยนกรรมสิทธิ์ครอบครอง เช่น ค้าปลีก ค้าส่ง ซูเปอร์มาร์เก็ต</li>
-                        <li class="bg-slate-100 p-2 rounded-lg"><strong class="text-blue-700">4. ด้านสารสนเทศ (Informational):</strong> การเปลี่ยนรูปและประมวลผลข้อมูล เช่น ธนาคาร สำนักงานบัญชี</li>
-                        <li class="bg-slate-100 p-2 rounded-lg"><strong class="text-blue-700">5. ทางสรีรวิทยา/จิตวิทยา:</strong> การเปลี่ยนภาวะร่างกาย/อารมณ์ เช่น โรงพยาบาล การท่องเที่ยว สปา โรงภาพยนตร์</li>
-                    </ul>
-                </div>
-            </div>
+      <div class="bcard" id="ch1-3">
+        <h3>1.3 ระบบการแปรรูป (Transformation System)</h3>
+        <p>หัวใจของการดำเนินงานคือการมององค์กรในรูปแบบระบบเปิดที่มีกระบวนการแปรสภาพองค์ประกอบต่าง ๆ โดยมีโครงสร้างหลัก 3 ส่วนพร้อมส่วนควบคุมการป้อนกลับ ดังแผนภาพ</p>
+        <div class="flowbar">
+          <div class="cell">
+            <h5>➜ ปัจจัยนำเข้า (Inputs)</h5>
+            <ul>
+              <li><b>ทรัพยากรที่ถูกแปลง:</b> วัตถุดิบ ข้อมูล ตัวลูกค้า</li>
+              <li><b>ทรัพยากรที่เป็นตัวแปลง:</b> แรงงาน เครื่องจักร ทุน อาคารสถานที่</li>
+            </ul>
+          </div>
+          <div class="cell core"><h5>PROCESS</h5><small>กระบวนการแปรรูป / แปรสภาพ</small></div>
+          <div class="cell">
+            <h5>ผลผลิต (Outputs) ➜</h5>
+            <ul>
+              <li><b>สินค้า (Goods):</b> จับต้องได้ เก็บได้</li>
+              <li><b>บริการ (Services):</b> จับต้องไม่ได้ บริโภคทันที</li>
+            </ul>
+          </div>
+        </div>
+        <p><b>ประเภทของการแปรรูปในระบบดำเนินงาน</b></p>
+        <div class="tags">
+          <div class="tag"><b>1. ทางกายภาพ (Physical):</b> การเปลี่ยนรูปทรงและเนื้อสาร เช่น โรงงานผลิตรถยนต์ โรงงานทอผ้า</div>
+          <div class="tag"><b>2. ด้านสถานที่ (Locational):</b> การเปลี่ยนตำแหน่งที่ตั้ง เช่น ธุรกิจขนส่ง โลจิสติกส์ คลังสินค้า</div>
+          <div class="tag"><b>3. การแลกเปลี่ยน (Exchange):</b> การเปลี่ยนกรรมสิทธิ์ครอบครอง เช่น ค้าปลีก ค้าส่ง ซูเปอร์มาร์เก็ต</div>
+          <div class="tag"><b>4. ด้านสารสนเทศ (Informational):</b> การเปลี่ยนรูปและประมวลผลข้อมูล เช่น ธนาคาร สำนักงานบัญชี</div>
+          <div class="tag"><b>5. ทางสรีรวิทยา/จิตวิทยา:</b> การเปลี่ยนภาวะร่างกาย/อารมณ์ เช่น โรงพยาบาล การท่องเที่ยว สปา โรงภาพยนตร์</div>
+        </div>
+      </div>
 
-            <div id="ch1-4" class="card p-8 mb-8">
-                <h3 class="heading-font text-xl font-bold text-blue-700 mb-4"><i class="fa-solid fa-boxes-packing mr-2"></i>1.4 ความแตกต่างระหว่างการผลิตสินค้าและการบริการ</h3>
-                <p class="text-slate-700 leading-relaxed mb-4 text-justify">
-                    แม้ว่างานจัดการการดำเนินงานจะมีเป้าหมายการเพิ่มผลิตภาพเหมือนกัน แต่ลักษณะเชิงกายภาพและการมีส่วนร่วมของลูกค้าทำให้กระบวนการผลิตสินค้าและการส่งมอบบริการมีความแตกต่างกันในมิติสำคัญต่าง ๆ ดังตารางนี้:
-                </p>
-                <div class="overflow-x-auto mt-4">
-                    <table class="w-full text-left border-collapse text-sm">
-                        <thead>
-                            <tr class="bg-slate-800 text-white font-semibold">
-                                <th class="p-3 rounded-tl-lg">เกณฑ์การเปรียบเทียบ</th>
-                                <th class="p-3">การผลิตสินค้า (Manufacturing/Goods)</th>
-                                <th class="p-3 rounded-tr-lg">การบริการ (Services)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-slate-700">
-                            <tr class="border-b bg-white">
-                                <td class="p-3 font-semibold text-blue-800">ความจับต้องได้ (Tangibility)</td>
-                                <td class="p-3">จับต้องได้ มีรูปร่าง โครงสร้างเชิงกายภาพชัดเจน</td>
-                                <td class="p-3">จับต้องไม่ได้ เป็นกิจกรรม ประสบการณ์ หรือกระบวนการ</td>
-                            </tr>
-                            <tr class="border-b bg-slate-50">
-                                <td class="p-3 font-semibold text-blue-800">สินค้าคงคลัง (Inventory)</td>
-                                <td class="p-3">สามารถผลิตล่วงหน้าและเก็บสำรองไว้ในคลังสินค้าได้</td>
-                                <td class="p-3">ไม่สามารถเก็บสำรองได้ (Perishable) ผลิตและบริโภคพร้อมกัน</td>
-                            </tr>
-                            <tr class="border-b bg-white">
-                                <td class="p-3 font-semibold text-blue-800">การมีส่วนร่วมของลูกค้า</td>
-                                <td class="p-3">ลูกค้ามีส่วนร่วมต่ำ กระบวนการผลิตแยกขาดจากลูกค้า</td>
-                                <td class="p-3">ลูกค้ามีส่วนร่วมสูง และอยู่ร่วมในกระบวนการส่งมอบบริการ</td>
-                            </tr>
-                            <tr class="border-b bg-slate-50">
-                                <td class="p-3 font-semibold text-blue-800">การประเมินคุณภาพ</td>
-                                <td class="p-3">วัดได้ง่าย มีเกณฑ์ทางกายภาพแน่นอน (ขนาด น้ำหนัก ตำหนิ)</td>
-                                <td class="p-3">วัดได้ยาก เป็นอัตวิสัย (Subjective) ขึ้นกับความพึงพอใจของบุคคล</td>
-                            </tr>
-                            <tr class="border-b bg-white">
-                                <td class="p-3 font-semibold text-blue-800">ทำเลที่ตั้ง (Location)</td>
-                                <td class="p-3">เน้นตั้งใกล้แหล่งวัตถุดิบ หรือทำเลที่ต้นทุนการผลิตต่ำ</td>
-                                <td class="p-3">เน้นตั้งใกล้กลุ่มเป้าหมาย เพื่อความสะดวกในการเข้าถึงของลูกค้า</td>
-                            </tr>
-                            <tr class="border-b bg-slate-50">
-                                <td class="p-3 font-semibold text-blue-800">ความเฉพาะตัว (Customization)</td>
-                                <td class="p-3">มีความเป็นมาตรฐานสูง ผลิตซ้ำได้ง่าย (Standardized)</td>
-                                <td class="p-3">มีความเฉพาะตัวสูง ปรับแต่งตามความต้องการของลูกค้าแต่ละคน</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+      <div class="bcard" id="ch1-4">
+        <h3>1.4 ความแตกต่างระหว่างการผลิตสินค้าและการบริการ</h3>
+        <p>แม้ว่างานจัดการการดำเนินงานจะมีเป้าหมายการเพิ่มผลิตภาพเหมือนกัน แต่ลักษณะเชิงกายภาพและการมีส่วนร่วมของลูกค้าทำให้กระบวนการผลิตสินค้าและการส่งมอบบริการมีความแตกต่างกันในมิติสำคัญต่าง ๆ ดังตาราง</p>
+        <div class="tbwrap"><table class="tb">
+          <thead><tr><th>เกณฑ์การเปรียบเทียบ</th><th>การผลิตสินค้า (Goods)</th><th>การบริการ (Services)</th></tr></thead>
+          <tbody>
+            <tr><td><b>ความจับต้องได้</b></td><td>จับต้องได้ มีรูปร่าง โครงสร้างเชิงกายภาพชัดเจน</td><td>จับต้องไม่ได้ เป็นกิจกรรม ประสบการณ์ หรือกระบวนการ</td></tr>
+            <tr><td><b>สินค้าคงคลัง</b></td><td>สามารถผลิตล่วงหน้าและเก็บสำรองไว้ในคลังสินค้าได้</td><td>ไม่สามารถเก็บสำรองได้ (Perishable) ผลิตและบริโภคพร้อมกัน</td></tr>
+            <tr><td><b>การมีส่วนร่วมของลูกค้า</b></td><td>ลูกค้ามีส่วนร่วมต่ำ กระบวนการผลิตแยกขาดจากลูกค้า</td><td>ลูกค้ามีส่วนร่วมสูง และอยู่ร่วมในกระบวนการส่งมอบบริการ</td></tr>
+            <tr><td><b>การประเมินคุณภาพ</b></td><td>วัดได้ง่าย มีเกณฑ์ทางกายภาพแน่นอน (ขนาด น้ำหนัก ตำหนิ)</td><td>วัดได้ยาก เป็นอัตวิสัย (Subjective) ขึ้นกับความพึงพอใจของบุคคล</td></tr>
+            <tr><td><b>ทำเลที่ตั้ง</b></td><td>เน้นตั้งใกล้แหล่งวัตถุดิบ หรือทำเลที่ต้นทุนการผลิตต่ำ</td><td>เน้นตั้งใกล้กลุ่มเป้าหมาย เพื่อความสะดวกในการเข้าถึงของลูกค้า</td></tr>
+            <tr><td><b>ความเฉพาะตัว</b></td><td>มีความเป็นมาตรฐานสูง ผลิตซ้ำได้ง่าย (Standardized)</td><td>มีความเฉพาะตัวสูง ปรับแต่งตามความต้องการของลูกค้าแต่ละคน</td></tr>
+          </tbody>
+        </table></div>
+      </div>
 
-            <div id="ch1-5" class="card p-8 mb-8">
-                <h3 class="heading-font text-xl font-bold text-blue-700 mb-4"><i class="fa-solid fa-link mr-2"></i>1.5 บทบาทของการจัดการการดำเนินงานในโซ่อุปทาน</h3>
-                <p class="text-slate-700 leading-relaxed mb-4 text-justify">
-                    ในบริบทธุรกิจสมัยใหม่ การดำเนินงานภายในองค์กรไม่ได้อยู่อย่างโดดเดี่ยว แต่ทำหน้าที่เป็นข้อต่อสำคัญใน <strong>โซ่อุปทาน (Supply Chain)</strong> ซึ่งเป็นเครือข่ายความร่วมมือขององค์กรตั้งแต่ต้นน้ำ (Upstream) ไปจนถึงปลายน้ำ (Downstream) เพื่อส่งมอบผลิตภัณฑ์และคุณค่าไปสู่ผู้บริโภคคนสุดท้าย โดยการดำเนินงานมีหน้าที่บริหารกระแสการไหล 3 ด้านหลักให้ลื่นไหลและมีประสิทธิภาพสูงสุด:
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    <div class="p-4 rounded-xl border-l-4 border-blue-600 bg-slate-50">
-                        <div class="flex items-center text-blue-800 font-bold mb-2">
-                            <i class="fa-solid fa-box mr-2"></i> 1. การไหลของวัตถุดิบและสินค้า (Material Flow)
-                        </div>
-                        <p class="text-xs text-slate-600">การบริหารการไหลของวัตถุดิบจากผู้ส่งมอบ (Suppliers) ผ่านการแปรรูปภายในโรงงาน และกระจายสินค้าสำเร็จรูปไปยังลูกค้า รวมถึงกระบวนการไหลย้อนกลับ (Reverse Logistics)</p>
-                    </div>
-                    <div class="p-4 rounded-xl border-l-4 border-amber-500 bg-slate-50">
-                        <div class="flex items-center text-amber-800 font-bold mb-2">
-                            <i class="fa-solid fa-circle-info mr-2"></i> 2. การไหลของสารสนเทศ (Information Flow)
-                        </div>
-                        <p class="text-xs text-slate-600">การส่งผ่านข้อมูลในรูปแบบสองทิศทาง เช่น ข้อมูลคำสั่งซื้อและความต้องการจากลูกค้าไหลกลับสู่โรงงาน และข้อมูลสถานะการส่งมอบสินค้าหรือแผนการผลิตไหลมุ่งหน้าไปสู่คู่ค้า</p>
-                    </div>
-                    <div class="p-4 rounded-xl border-l-4 border-emerald-600 bg-slate-50">
-                        <div class="flex items-center text-emerald-800 font-bold mb-2">
-                            <i class="fa-solid fa-credit-card mr-2"></i> 3. การไหลของเงินทุน (Financial Flow)
-                        </div>
-                        <p class="text-xs text-slate-600">การไหลเวียนของเงินตรา เครดิตเทอม การชำระเงินค่าสินค้าสำเร็จรูปจากผู้บริโภค ย้อนกลับมาเป็นรายได้ขององค์กร และจ่ายต่อเป็นค่าวัตถุดิบและต้นทุนการดำเนินงานให้แก่คู่ค้าต้นน้ำ</p>
-                    </div>
-                </div>
-            </div>
+      <div class="bcard" id="ch1-5">
+        <h3>1.5 บทบาทของการจัดการการดำเนินงานในโซ่อุปทาน</h3>
+        <p>ในบริบทธุรกิจสมัยใหม่ การดำเนินงานภายในองค์กรไม่ได้อยู่อย่างโดดเดี่ยว แต่ทำหน้าที่เป็นข้อต่อสำคัญใน <strong>โซ่อุปทาน (Supply Chain)</strong> ซึ่งเป็นเครือข่ายความร่วมมือขององค์กรตั้งแต่ต้นน้ำ (Upstream) ไปจนถึงปลายน้ำ (Downstream) เพื่อส่งมอบผลิตภัณฑ์และคุณค่าไปสู่ผู้บริโภคคนสุดท้าย โดยการดำเนินงานมีหน้าที่บริหารกระแสการไหล 3 ด้านหลักให้ลื่นไหลและมีประสิทธิภาพสูงสุด</p>
+        <div class="tags">
+          <div class="tag"><b>📦 1. การไหลของวัตถุดิบและสินค้า (Material Flow):</b> การบริหารการไหลของวัตถุดิบจากผู้ส่งมอบ (Suppliers) ผ่านการแปรรูปภายในโรงงาน และกระจายสินค้าสำเร็จรูปไปยังลูกค้า รวมถึงกระบวนการไหลย้อนกลับ (Reverse Logistics)</div>
+          <div class="tag"><b>ℹ️ 2. การไหลของสารสนเทศ (Information Flow):</b> การส่งผ่านข้อมูลสองทิศทาง เช่น ข้อมูลคำสั่งซื้อและความต้องการจากลูกค้าไหลกลับสู่โรงงาน และข้อมูลสถานะการส่งมอบสินค้าหรือแผนการผลิตไหลไปสู่คู่ค้า</div>
+          <div class="tag"><b>💳 3. การไหลของเงินทุน (Financial Flow):</b> การไหลเวียนของเงินตรา เครดิตเทอม การชำระเงินค่าสินค้าจากผู้บริโภคย้อนกลับมาเป็นรายได้ขององค์กร และจ่ายต่อเป็นค่าวัตถุดิบและต้นทุนการดำเนินงานให้แก่คู่ค้าต้นน้ำ</div>
+        </div>
+      </div>
 
-            <div id="ch1-6" class="card p-8 mb-8">
-                <h3 class="heading-font text-xl font-bold text-blue-700 mb-4"><i class="fa-solid fa-square-poll-vertical mr-2"></i>1.6 ผลิตภาพและการวัดผลการดำเนินงาน (Productivity)</h3>
-                <p class="text-slate-700 leading-relaxed mb-4 text-justify">
-                    <strong>ผลิตภาพ (Productivity)</strong> คือ ดัชนีหรือตัวชี้วัดที่แสดงประสิทธิภาพในการเปลี่ยนปัจจัยนำเข้าให้เป็นผลผลิตของระบบการดำเนินงาน ซึ่งแตกต่างจากคำว่า ประสิทธิผล (Effectiveness - การทำได้บรรลุเป้าหมาย) และ ประสิทธิภาพ (Efficiency - การใช้ทรัพยากรอย่างคุ้มค่าได้อัตราส่วนที่ดี) โดยผลิตภาพสามารถคำนวณวัดผลได้ 3 รูปแบบหลักตามโครงสร้างสูตรต่อไปนี้:
-                </p>
-                
-                <div class="space-y-4 my-6">
-                    <div>
-                        <span class="text-xs font-bold text-slate-500 block mb-1">1. ผลิตภาพปัจจัยเดี่ยว (Single-Factor Productivity)</span>
-                        <div class="formula">ผลิตภาพปัจจัยเดี่ยว = ผลผลิตที่ได้ (Output) / ปัจจัยนำเข้าเพียงชนิดเดียว (Single Input)</div>
-                        <span class="text-[11px] text-slate-400 block mt-1">*ตัวอย่างเช่น ชิ้นงานที่ผลิตได้ต่อหนึ่งชั่วโมงแรงงาน หรือ กิโลกรัมผลผลิตต่อมูลค่าวัตถุดิบ</span>
-                    </div>
-                    <div>
-                        <span class="text-xs font-bold text-slate-500 block mb-1">2. ผลิตภาพหลายปัจจัย (Multi-Factor Productivity)</span>
-                        <div class="formula">ผลิตภาพหลายปัจจัย = ผลผลิตที่ได้ (Output) / (ค่าแรง + ค่าวัตถุดิบ + ค่าโสหุ้ยการผลิต)</div>
-                        <span class="text-[11px] text-slate-400 block mt-1">*เป็นการรวมปัจจัยนำเข้าหลายตัวเข้าด้วยกัน โดยมักแปลงหน่วยของปัจจัยนำเข้าทุกตัวให้เป็นหน่วยเงินตรา (เช่น บาท)</span>
-                    </div>
-                </div>
-                
-                <p class="text-slate-700 text-sm leading-relaxed text-justify">
-                    <strong>แนวทางในการปรับปรุงผลิตภาพ:</strong> องค์กรสามารถเพิ่มผลิตภาพได้ผ่านกลยุทธ์ 4 แนวทางหลัก คือ (1) เพิ่มผลผลิตโดยใช้ปัจจัยนำเข้าเท่าเดิม, (2) ลดปัจจัยนำเข้าลงโดยรักษาผลผลิตให้ได้เท่าเดิม, (3) เพิ่มผลผลิตในสัดส่วนที่มากกว่าการเพิ่มของปัจจัยนำเข้า หรือ (4) ลดปัจจัยนำเข้าในสัดส่วนที่มากกว่าการลดลงของผลผลิต
-                </p>
-            </div>
+      <div class="bcard" id="ch1-6">
+        <h3>1.6 ผลิตภาพและการวัดผลการดำเนินงาน (Productivity)</h3>
+        <p><strong>ผลิตภาพ (Productivity)</strong> คือ ดัชนีหรือตัวชี้วัดที่แสดงประสิทธิภาพในการเปลี่ยนปัจจัยนำเข้าให้เป็นผลผลิตของระบบการดำเนินงาน ซึ่งแตกต่างจากคำว่า ประสิทธิผล (Effectiveness — การทำได้บรรลุเป้าหมาย) และ ประสิทธิภาพ (Efficiency — การใช้ทรัพยากรอย่างคุ้มค่า) โดยผลิตภาพสามารถวัดผลได้ตามโครงสร้างสูตรต่อไปนี้</p>
+        <p><b>1. ผลิตภาพปัจจัยเดี่ยว (Single-Factor Productivity)</b></p>
+        <div class="formula">ผลิตภาพปัจจัยเดี่ยว = ผลผลิตที่ได้ (Output) ÷ ปัจจัยนำเข้าเพียงชนิดเดียว (Single Input)</div>
+        <p><b>2. ผลิตภาพหลายปัจจัย (Multi-Factor Productivity)</b></p>
+        <div class="formula">ผลิตภาพหลายปัจจัย = ผลผลิตที่ได้ (Output) ÷ (ค่าแรง + ค่าวัตถุดิบ + ค่าโสหุ้ยการผลิต)</div>
+        <p><strong>แนวทางในการปรับปรุงผลิตภาพ:</strong> องค์กรสามารถเพิ่มผลิตภาพได้ผ่านกลยุทธ์ 4 แนวทางหลัก คือ (1) เพิ่มผลผลิตโดยใช้ปัจจัยนำเข้าเท่าเดิม (2) ลดปัจจัยนำเข้าลงโดยรักษาผลผลิตให้ได้เท่าเดิม (3) เพิ่มผลผลิตในสัดส่วนที่มากกว่าการเพิ่มของปัจจัยนำเข้า หรือ (4) ลดปัจจัยนำเข้าในสัดส่วนที่มากกว่าการลดลงของผลผลิต</p>
+        <div class="notebox">🧮 ทดลองคำนวณผลิตภาพด้วยตนเองได้ที่เมนู <a href="#" onclick="go('tools');return false" style="color:var(--teal);font-weight:700">เครื่องมือคำนวณ</a></div>
+      </div>
 
-            <div id="ch1-calc" class="card p-8 bg-blue-50 border-blue-200 mb-8">
-                <h3 class="heading-font text-xl font-bold text-blue-800 mb-4"><i class="fa-solid fa-calculator mr-2"></i>Interactive Practice: โปรแกรมคำนวณผลิตภาพปัจจัยเดี่ยว</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1">ผลผลิตรวมที่ได้ (Outputs เช่น จำนวนชิ้นงาน, มูลค่าบาท)</label>
-                            <input type="number" id="output" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" value="4800">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1">ปัจจัยนำเข้าที่ใช้ (Inputs เช่น ชั่วโมงแรงงาน, จำนวนเครื่องจักร, ทุน)</label>
-                            <input type="number" id="input" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" value="64">
-                        </div>
-                        <button onclick="calcProductivity()" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition">กดเพื่อคำนวณผลิตภาพ</button>
-                    </div>
-                    <div class="flex items-center justify-center bg-white rounded-xl p-6 border-2 border-dashed border-blue-200">
-                        <div class="text-center">
-                            <p class="text-sm text-slate-500 mb-1">ผลิตภาพดำเนินงานที่คำนวณได้</p>
-                            <span id="prod-result" class="text-4xl font-bold text-blue-700">75.00</span>
-                            <p class="text-xs text-slate-400 mt-2">หน่วยผลผลิต ต่อ หน่วยปัจจัยนำเข้า</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="bcard" id="ch1-7">
+        <h3>1.7 การประยุกต์ใช้ในบริบทอุตสาหกรรมภาคตะวันออกเฉียงเหนือและลุ่มน้ำโขง</h3>
+        <p>การจัดการการดำเนินงานในระดับอุดมศึกษาภาคท้องถิ่น จำเป็นต้องเข้าใจการบูรณาการทฤษฎีสากลเข้ากับ <strong>บริบทพื้นที่จริง (Local Localization)</strong> สำหรับภาคอีสานและเขตเศรษฐกิจลุ่มน้ำโขง (GMS) โครงสร้างอุตสาหกรรมส่วนใหญ่ตั้งอยู่บนฐานของเกษตรกรรมแปรรูป และวิสาหกิจชุมชนขนาดกลางและย่อม (SMEs/OTOP) การประยุกต์ใช้เครื่องมือ OM จึงมีลักษณะเฉพาะดังนี้</p>
+        <div class="tags">
+          <div class="tag"><b>🌾 1. การจัดการความยืดหยุ่นในอุตสาหกรรมแปรรูปเกษตร:</b> พืชเศรษฐกิจของภาคอีสาน เช่น มันสำปะหลัง อ้อย ข้าวหอมมะลิ และพริกแปลงใหญ่ มีความผันผวนสูงทั้งด้านปริมาณและคุณภาพตามฤดูกาล ระบบ OM ช่วยจัดวางผังโรงงานและบริหารกำลังการผลิตให้ยืดหยุ่น รวมถึงการประยุกต์บล็อกเชน (Blockchain) เพื่อการตรวจสอบย้อนกลับ (Traceability) สร้างมูลค่าเพิ่มสู่ตลาดระดับสูง</div>
+          <div class="tag"><b>🚛 2. การบริหารโซ่อุปทานและโลจิสติกส์การค้าชายแดน:</b> จังหวัดอุบลราชธานีและกลุ่มจังหวัดอีสานใต้มีทำเลเป็นประตูเชื่อมโยงสู่ สปป.ลาว กัมพูชา และเวียดนาม การใช้ JIT Hubs การควบรวมตู้สินค้า (Consolidation) และการลดความสูญเปล่าในโลจิสติกส์ข้ามแดน เป็นหัวใจในการลดต้นทุนรวมและเพิ่มขีดความสามารถการแข่งขันของภูมิภาค</div>
+        </div>
+      </div>
 
-            <div id="ch1-7" class="card p-8">
-                <h3 class="heading-font text-xl font-bold text-blue-700 mb-4"><i class="fa-solid fa-map-location-dot mr-2"></i>1.7 การประยุกต์ใช้ในบริบทอุตสาหกรรมภาคตะวันออกเฉียงเหนือและลุ่มน้ำโขง</h3>
-                <p class="text-slate-700 leading-relaxed mb-4 text-justify">
-                    การจัดการการดำเนินงานในระดับอุดมศึกษาภาคท้องถิ่น จำเป็นต้องเข้าใจการบูรณาการทฤษฎีสากลเข้ากับ <strong>บริบทพื้นที่จริง (Local Localization)</strong> สำหรับภาคอีสานและเขตเศรษฐกิจลุ่มน้ำโขง (GMS) โครงสร้างอุตสาหกรรมส่วนใหญ่ตั้งอยู่บนฐานของเกษตรกรรมแปรรูป และวิสาหกิจชุมชนขนาดกลางและย่อม (SMEs/OTOP) การประยุกต์ใช้เครื่องมือ OM จึงมีลักษณะเฉพาะดังนี้:
-                </p>
-                <div class="space-y-4">
-                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                        <h4 class="font-bold text-slate-800 text-sm mb-1"><i class="fa-solid fa-wheat-awn text-amber-600 mr-2"></i>1. การจัดการความยืดหยุ่นในอุตสาหกรรมแปรรูปเกษตร</h4>
-                        <p class="text-xs text-slate-600 leading-relaxed text-justify">
-                            พืชเศรษฐกิจของภาคอีสาน เช่น มันสำปะหลัง อ้อย ข้าวหอมมะลิ และพริกแปลงใหญ่ มีความผันผวนสูงทั้งด้านปริมาณและคุณภาพตามฤดูกาล ระบบ OM จะเข้ามาช่วยจัดวางผังโรงงานและการบริหารกำลังการผลิตให้มีความยืดหยุ่น (Flexibility) รวมถึงการประยุกต์เทคโนโลยีดิจิทัล เช่น บล็อกเชน (Blockchain) เพื่อการตรวจสอบย้อนกลับ (Traceability) แหล่งที่มาของผลผลิตเพื่อสร้างมูลค่าเพิ่มสู่ตลาดระดับสูง
-                        </p>
-                    </div>
-                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                        <h4 class="font-bold text-slate-800 text-sm mb-1"><i class="fa-solid fa-truck-ramp-box text-blue-600 mr-2"></i>2. การบริหารโซ่อุปทานและโลจิสติกส์การค้าชายแดน</h4>
-                        <p class="text-xs text-slate-600 leading-relaxed text-justify">
-                            จังหวัดอุบลราชธานีและกลุ่มจังหวัดอีสานใต้มีทำเลที่ตั้งเป็นประตูเชื่อมโยงสู่ สปป.ลาว กัมพูชา และเวียดนาม การใช้เครื่องมือ OM ในการจัดการสินค้าคงคลังแบบทันเวลาพอดี (JIT Hubs) การควบรวมตู้สินค้า (Consolidation) และการลดขั้นตอนความสูญเปล่าในกระบวนการโลจิสติกส์ข้ามแดน ถือเป็นหัวใจสำคัญในการลดต้นทุนรวมและเพิ่มขีดความสามารถการแข่งขันของภูมิภาค
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
+      <span class="chip-ch" id="ch3">บทที่ 3</span>
+      <h2 class="chtitle">ประเภทกระบวนการและการวิเคราะห์จุดคุ้มทุน</h2>
+      <div class="bcard">
+        <h3>การวิเคราะห์จุดคุ้มทุน (Break-Even Analysis)</h3>
+        <p>การวิเคราะห์จุดคุ้มทุนเป็นเครื่องมือประกอบการตัดสินใจเลือกกระบวนการผลิต โดยเปรียบเทียบต้นทุนคงที่ (Fixed Cost) ต้นทุนผันแปรต่อหน่วย (Variable Cost) และราคาขายต่อหน่วย (Price) เพื่อหาปริมาณการผลิตที่ทำให้รายได้รวมเท่ากับต้นทุนรวม</p>
+        <div class="formula">BEP (หน่วย) = ต้นทุนคงที่ ÷ (ราคาขายต่อหน่วย − ต้นทุนผันแปรต่อหน่วย)</div>
+        <div class="notebox">🧮 ทดลองวิเคราะห์จุดคุ้มทุนแบบปฏิสัมพันธ์ได้ที่เมนู <a href="#" onclick="go('tools');return false" style="color:var(--teal);font-weight:700">เครื่องมือคำนวณ</a></div>
+      </div>
 
-        <section id="ch3" class="mb-20 border-t pt-10">
-            <div class="flex items-center mb-6">
-                <span class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm heading-font mr-3">บทที่ 3</span>
-                <h2 class="heading-font text-3xl font-bold text-slate-800">ประเภทกระบวนการและการวิเคราะห์จุดคุ้มทุน</h2>
-            </div>
-
-            <div id="ch3-calc" class="card p-8 bg-emerald-50 border-emerald-200 mb-10">
-                <h3 class="heading-font text-xl font-bold text-emerald-800 mb-4"><i class="fa-solid fa-chart-area mr-2"></i>เครื่องมือปฏิสัมพันธ์: การวิเคราะห์จุดคุ้มทุน (Break-Even Point Tool)</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div>
-                        <label class="block text-xs font-bold mb-1 text-slate-700">ต้นทุนคงที่รวม (Fixed Cost: บาท)</label>
-                        <input type="number" id="fc" value="100000" class="w-full p-2 border rounded focus:ring-2 focus:ring-emerald-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold mb-1 text-slate-700">ราคาขายต่อหน่วย (Price: บาท)</label>
-                        <input type="number" id="price" value="90" class="w-full p-2 border rounded focus:ring-2 focus:ring-emerald-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold mb-1 text-slate-700">ต้นทุนผันแปรต่อหน่วย (Variable Cost: บาท)</label>
-                        <input type="number" id="vc" value="40" class="w-full p-2 border rounded focus:ring-2 focus:ring-emerald-500">
-                    </div>
-                </div>
-                <button onclick="calcBEP()" class="bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-emerald-700 transition w-full md:w-auto">ประมวลผลวิเคราะห์จุดคุ้มทุน</button>
-                <div id="bep-res" class="mt-6 p-4 bg-white rounded-lg hidden text-emerald-700 font-bold text-center border border-emerald-200 shadow-sm">
-                    ต้องจำหน่ายสินค้าให้ได้อย่างน้อย <span id="bep-val" class="text-2xl text-emerald-600 mx-1">0</span> หน่วย จึงจะคุ้มทุน (ต้นทุนรวมเท่ากับรายได้รวม)
-                </div>
-            </div>
-        </section>
-
-        <section id="ch10" class="mb-20 border-t pt-10">
-            <div class="flex items-center mb-6">
-                <span class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm heading-font mr-3">บทที่ 10</span>
-                <h2 class="heading-font text-3xl font-bold text-slate-800">การบูรณาการในบริบทลุ่มน้ำโขง</h2>
-            </div>
-            
-            <div class="case-study mb-8">
-                <h4 class="heading-font font-bold text-emerald-800 mb-2"><i class="fa-solid fa-leaf mr-2"></i>กรณีศึกษาบูรณาการ: วิสาหกิจแปรรูปเกษตรหัตถกรรมอีสาน</h4>
-                <p class="text-sm text-slate-700 leading-relaxed italic text-justify">
-                    "วิสาหกิจชุมชนทอผ้าไหมกาบบัวบ้านปะอาว จ.อุบลราชธานี ประยุกต์ใช้การลดความสูญเปล่าตามหลักการ <strong>ECRS (Eliminate-Combine-Rearrange-Simplify)</strong> เพื่อจัดระเบียบสายงานการผลิตการย้อมสีและการทอผ้าใหม่ ผลการดำเนินงานพบว่าสามารถเพิ่มผลิตภาพของแรงงานในชุมชนขึ้นได้จริงถึง 20% โดยกลุ่มแม่บ้านไม่ต้องลงทุนจัดซื้อเครื่องจักรราคาแพง แต่ใช้การจัดการการดำเนินงานปรับปรุงกระบวนการไหลของงาน (Workflow Optimization) แทน"
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="card p-6 border-l-4 border-purple-500 shadow-sm bg-white">
-                    <h5 class="font-bold text-slate-800 mb-2">ทิศทางอุตสาหกรรม 5.0</h5>
-                    <p class="text-xs text-slate-500 leading-relaxed">เน้นการบูรณาการเทคโนโลยีโดยคำนึงถึงมนุษย์เป็นศูนย์กลาง (Human-Centric) มุ่งสร้างความยืดหยุ่นต่อวิกฤตเศรษฐกิจคู่ขนานกับการใส่ใจความยั่งยืนของสิ่งแวดล้อมและสังคมท้องถิ่น</p>
-                </div>
-                <div class="card p-6 border-l-4 border-indigo-500 shadow-sm bg-white">
-                    <h5 class="font-bold text-slate-800 mb-2">นวัตกรรมห่วงโซ่ขายตรงอัจฉริยะ</h5>
-                    <p class="text-xs text-slate-500 leading-relaxed">การนำแนวคิดเทคโนโลยีการจัดเก็บข้อมูลแบบกระจายศูนย์หรือ Blockchain เข้ามาประยุกต์ใช้กับการตรวจสอบย้อนกลับสินค้าเกษตรเด่น เช่น พริกแปลงใหญ่หัวเรือ จ.อุบลราชธานี เพื่อเพิ่มความเชื่อมั่นและมูลค่าในตลาดสากล</p>
-                </div>
-            </div>
-        </section>
+      <span class="chip-ch" id="ch10">บทที่ 10</span>
+      <h2 class="chtitle">การบูรณาการในบริบทลุ่มน้ำโขง</h2>
+      <div class="case">
+        <h4>🌿 กรณีศึกษาบูรณาการ: วิสาหกิจแปรรูปเกษตรหัตถกรรมอีสาน</h4>
+        <p>"วิสาหกิจชุมชนทอผ้าไหมกาบบัวบ้านปะอาว จ.อุบลราชธานี ประยุกต์ใช้การลดความสูญเปล่าตามหลักการ <strong>ECRS (Eliminate-Combine-Rearrange-Simplify)</strong> เพื่อจัดระเบียบสายงานการผลิตการย้อมสีและการทอผ้าใหม่ ผลการดำเนินงานพบว่าสามารถเพิ่มผลิตภาพของแรงงานในชุมชนขึ้นได้จริงถึง 20% โดยกลุ่มแม่บ้านไม่ต้องลงทุนจัดซื้อเครื่องจักรราคาแพง แต่ใช้การจัดการการดำเนินงานปรับปรุงกระบวนการไหลของงาน (Workflow Optimization) แทน"</p>
+      </div>
+      <div class="grid3" id="ch10-trend" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+        <div class="bcard" style="margin:0;border-left:4px solid #7c5cd6">
+          <h4 class="hf" style="color:var(--navy);margin-bottom:.4rem">ทิศทางอุตสาหกรรม 5.0</h4>
+          <p style="font-size:.85rem;color:var(--muted)">เน้นการบูรณาการเทคโนโลยีโดยคำนึงถึงมนุษย์เป็นศูนย์กลาง (Human-Centric) มุ่งสร้างความยืดหยุ่นต่อวิกฤตเศรษฐกิจคู่ขนานกับการใส่ใจความยั่งยืนของสิ่งแวดล้อมและสังคมท้องถิ่น</p>
+        </div>
+        <div class="bcard" style="margin:0;border-left:4px solid var(--teal)">
+          <h4 class="hf" style="color:var(--navy);margin-bottom:.4rem">นวัตกรรมห่วงโซ่ขายตรงอัจฉริยะ</h4>
+          <p style="font-size:.85rem;color:var(--muted)">การนำเทคโนโลยีการจัดเก็บข้อมูลแบบกระจายศูนย์ (Blockchain) มาประยุกต์ใช้กับการตรวจสอบย้อนกลับสินค้าเกษตรเด่น เช่น พริกแปลงใหญ่หัวเรือ จ.อุบลราชธานี เพื่อเพิ่มความเชื่อมั่นและมูลค่าในตลาดสากล</p>
+        </div>
+      </div>
     </main>
+  </div>
+</section>
 
-    <script>
-        // Function to toggle Sidebar sub-menus
-        function toggleNested(id) {
-            const menu = document.getElementById(id);
-            const icon = menu.previousElementSibling.querySelector('.fa-chevron-down');
-            menu.classList.toggle('active');
-            if(menu.classList.contains('active')) {
-                icon.style.transform = 'rotate(180deg)';
-            } else {
-                icon.style.transform = 'rotate(0deg)';
-            }
-        }
+<!-- ============ VIEW: TOOLS ============ -->
+<section id="v-tools" class="view">
+  <div class="toolwrap">
+    <h2>🧮 เครื่องมือคำนวณปฏิสัมพันธ์</h2>
+    <p class="lead">ทดลองปรับค่าตัวแปรและสังเกตผลลัพธ์ เพื่อสร้างความเข้าใจเชิงปริมาณประกอบเนื้อหาแต่ละบท</p>
 
-        // Single-Factor Productivity Calculation Logic
-        function calcProductivity() {
-            const out = parseFloat(document.getElementById('output').value);
-            const ins = parseFloat(document.getElementById('input').value);
-            if(ins === 0 || isNaN(out) || isNaN(ins)) {
-                alert("กรุณากรอกข้อมูลตัวเลขให้ถูกต้องและปัจจัยนำเข้าต้องไม่เป็นศูนย์");
-                return;
-            }
-            const res = out / ins;
-            document.getElementById('prod-result').innerText = res.toFixed(2);
-        }
+    <!-- Productivity -->
+    <div class="tool">
+      <h3>1) ผลิตภาพปัจจัยเดี่ยว <span class="bdg">บทที่ 1</span></h3>
+      <p class="d">Productivity = Output ÷ Input</p>
+      <div class="fields">
+        <div><label for="p-out">ผลผลิตรวมที่ได้ (Output)</label><input type="number" id="p-out" value="4800"></div>
+        <div><label for="p-in">ปัจจัยนำเข้าที่ใช้ (Input)</label><input type="number" id="p-in" value="64"></div>
+      </div>
+      <button class="btn" onclick="calcProd()">คำนวณผลิตภาพ</button>
+      <div class="err" id="p-err">กรุณากรอกตัวเลขให้ถูกต้อง และปัจจัยนำเข้าต้องไม่เป็นศูนย์</div>
+      <div class="result" id="p-res">ผลิตภาพที่คำนวณได้ = <span class="big" id="p-val">75.00</span> <small>หน่วยผลผลิตต่อหน่วยปัจจัยนำเข้า</small></div>
+    </div>
 
-        // Break-Even Point (BEP) Calculation Logic
-        function calcBEP() {
-            const fc = parseFloat(document.getElementById('fc').value);
-            const p = parseFloat(document.getElementById('price').value);
-            const v = parseFloat(document.getElementById('vc').value);
-            
-            if (p <= v || isNaN(fc) || isNaN(p) || isNaN(v)) {
-                alert("ข้อผิดพลาด: ราคาขายต่อหน่วยต้องมากกว่าต้นทุนผันแปรต่อหน่วย");
-                return;
-            }
-            
-            const bep = fc / (p - v);
-            const div = document.getElementById('bep-res');
-            div.classList.remove('hidden');
-            document.getElementById('bep-val').innerText = Math.ceil(bep).toLocaleString();
-        }
-    </script>
+    <!-- BEP -->
+    <div class="tool">
+      <h3>2) การวิเคราะห์จุดคุ้มทุน (Break-Even Point) <span class="bdg">บทที่ 3</span></h3>
+      <p class="d">BEP = FC ÷ (P − V)</p>
+      <div class="fields">
+        <div><label for="b-fc">ต้นทุนคงที่รวม (บาท)</label><input type="number" id="b-fc" value="100000"></div>
+        <div><label for="b-p">ราคาขายต่อหน่วย (บาท)</label><input type="number" id="b-p" value="90"></div>
+        <div><label for="b-v">ต้นทุนผันแปรต่อหน่วย (บาท)</label><input type="number" id="b-v" value="40"></div>
+      </div>
+      <button class="btn" onclick="calcBEP()">วิเคราะห์จุดคุ้มทุน</button>
+      <div class="err" id="b-err">ราคาขายต่อหน่วยต้องมากกว่าต้นทุนผันแปรต่อหน่วย</div>
+      <div class="result" id="b-res">ต้องจำหน่ายอย่างน้อย <span class="big" id="b-val">0</span> <small>หน่วย จึงจะคุ้มทุน (รายได้รวม = ต้นทุนรวม)</small></div>
+    </div>
+
+    <!-- EOQ -->
+    <div class="tool">
+      <h3>3) ปริมาณการสั่งซื้อที่ประหยัด (EOQ) <span class="bdg">บทที่ 7</span></h3>
+      <p class="d">EOQ = √(2DS ÷ H)</p>
+      <div class="fields">
+        <div><label for="e-d">ความต้องการต่อปี D (หน่วย)</label><input type="number" id="e-d" value="12000"></div>
+        <div><label for="e-s">ต้นทุนการสั่งซื้อต่อครั้ง S (บาท)</label><input type="number" id="e-s" value="500"></div>
+        <div><label for="e-h">ต้นทุนเก็บรักษาต่อหน่วยต่อปี H (บาท)</label><input type="number" id="e-h" value="12"></div>
+      </div>
+      <button class="btn" onclick="calcEOQ()">คำนวณ EOQ</button>
+      <div class="err" id="e-err">ทุกค่าต้องเป็นตัวเลขบวก</div>
+      <div class="result" id="e-res">EOQ = <span class="big" id="e-val">0</span> <small>หน่วยต่อครั้ง · จำนวนครั้งสั่งซื้อต่อปี ≈ <b id="e-n">0</b> ครั้ง · ต้นทุนรวมสั่งซื้อ+เก็บรักษา ≈ <b id="e-tc">0</b> บาท/ปี</small></div>
+    </div>
+
+    <!-- OEE -->
+    <div class="tool">
+      <h3>4) ประสิทธิผลโดยรวมของเครื่องจักร (OEE) <span class="bdg">บทที่ 9</span></h3>
+      <p class="d">OEE = Availability × Performance × Quality</p>
+      <div class="fields">
+        <div><label for="o-a">อัตราเดินเครื่อง Availability (%)</label><input type="number" id="o-a" value="90"></div>
+        <div><label for="o-p">สมรรถนะ Performance (%)</label><input type="number" id="o-p" value="95"></div>
+        <div><label for="o-q">คุณภาพ Quality (%)</label><input type="number" id="o-q" value="98"></div>
+      </div>
+      <button class="btn" onclick="calcOEE()">คำนวณ OEE</button>
+      <div class="err" id="o-err">กรุณากรอกค่าร้อยละระหว่าง 0–100</div>
+      <div class="result" id="o-res">OEE = <span class="big" id="o-val">0</span> <small id="o-note">%</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VIEW: QUIZ ============ -->
+<section id="v-quiz" class="view">
+  <div class="quizwrap">
+    <h2>🧠 แบบฝึกหัดทบทวน (10 ข้อ)</h2>
+    <p style="color:var(--muted);margin-bottom:1.5rem">เลือกคำตอบที่ถูกต้องที่สุด แล้วกด "ตรวจคำตอบ" ระบบจะแสดงเฉลยพร้อมคำอธิบาย</p>
+    <div id="quizlist"></div>
+    <button class="btn" style="width:100%;padding:.85rem;font-size:1rem" onclick="gradeQuiz()">ตรวจคำตอบ</button>
+    <div class="scorebox" id="scorebox">
+      <div class="hf" style="font-size:1rem;color:#c8d6e4">คะแนนของคุณ</div>
+      <div class="sc"><span id="score">0</span> / 10</div>
+      <div id="verdict" style="margin-top:.4rem;font-size:.92rem"></div>
+      <button class="btn" style="margin-top:1rem;background:var(--amber);color:var(--navy)" onclick="resetQuiz()">ทำใหม่อีกครั้ง</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <b>OM Learning Hub</b> · รายวิชาการจัดการการดำเนินงาน · ผศ.ดร.คลอเคลีย วจนะวิชากร · มหาวิทยาลัยราชภัฏอุบลราชธานี
+</footer>
+
+<script>
+/* ---------- SPA navigation ---------- */
+function go(v){
+  document.querySelectorAll('.view').forEach(s=>s.classList.remove('active'));
+  document.getElementById('v-'+v).classList.add('active');
+  document.querySelectorAll('.topnav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  document.getElementById('sbtoggle').style.display = (v==='book') ? '' : 'none';
+  document.getElementById('sidebar').classList.remove('open');
+  window.scrollTo({top:0});
+}
+function closeSb(){ if(window.innerWidth<900) document.getElementById('sidebar').classList.remove('open'); }
+document.getElementById('sbtoggle').style.display='none';
+
+/* ---------- Calculators ---------- */
+function num(id){return parseFloat(document.getElementById(id).value)}
+function show(id,on){document.getElementById(id).classList.toggle('show',on)}
+function err(id,on){document.getElementById(id).style.display=on?'block':'none'}
+
+function calcProd(){
+  const o=num('p-out'), i=num('p-in');
+  if(isNaN(o)||isNaN(i)||i===0){err('p-err',true);show('p-res',false);return}
+  err('p-err',false);
+  document.getElementById('p-val').innerText=(o/i).toFixed(2);
+  show('p-res',true);
+}
+function calcBEP(){
+  const fc=num('b-fc'), p=num('b-p'), v=num('b-v');
+  if(isNaN(fc)||isNaN(p)||isNaN(v)||p<=v){err('b-err',true);show('b-res',false);return}
+  err('b-err',false);
+  document.getElementById('b-val').innerText=Math.ceil(fc/(p-v)).toLocaleString();
+  show('b-res',true);
+}
+function calcEOQ(){
+  const d=num('e-d'), s=num('e-s'), h=num('e-h');
+  if(!(d>0&&s>0&&h>0)){err('e-err',true);show('e-res',false);return}
+  err('e-err',false);
+  const q=Math.sqrt(2*d*s/h);
+  document.getElementById('e-val').innerText=Math.round(q).toLocaleString();
+  document.getElementById('e-n').innerText=(d/q).toFixed(1);
+  document.getElementById('e-tc').innerText=Math.round((d/q)*s+(q/2)*h).toLocaleString();
+  show('e-res',true);
+}
+function calcOEE(){
+  const a=num('o-a'), p=num('o-p'), q=num('o-q');
+  const ok=v=>!isNaN(v)&&v>=0&&v<=100;
+  if(!(ok(a)&&ok(p)&&ok(q))){err('o-err',true);show('o-res',false);return}
+  err('o-err',false);
+  const oee=(a/100)*(p/100)*(q/100)*100;
+  document.getElementById('o-val').innerText=oee.toFixed(2);
+  document.getElementById('o-note').innerText='% '+(oee>=85?'· ระดับ World Class (≥85%)':oee>=60?'· ระดับปานกลาง ควรปรับปรุงต่อเนื่อง':'· ต่ำกว่าเกณฑ์ ควรวิเคราะห์ความสูญเสียหลัก 6 ประการ');
+  show('o-res',true);
+}
+
+/* ---------- Quiz ---------- */
+const QUIZ=[
+ {q:"ข้อใดคือความหมายที่ถูกต้องที่สุดของการจัดการการดำเนินงาน (OM)",
+  o:["การบริหารเงินทุนและงบประมาณขององค์กร","กระบวนการแปรสภาพปัจจัยนำเข้าให้เป็นผลผลิตอย่างมีประสิทธิภาพและประสิทธิผล","การสร้างอุปสงค์และสื่อสารการตลาดสู่ลูกค้า","การสรรหาและพัฒนาทรัพยากรบุคคล"],a:1,
+  w:"OM คือการออกแบบ วางแผน ควบคุม และปรับปรุงระบบการแปรรูป Inputs → Outputs เพื่อสร้างมูลค่าเพิ่ม"},
+ {q:"หน้าที่หลัก 3 ประการ (Core Functions) ขององค์กร ประกอบด้วยข้อใด",
+  o:["การตลาด การดำเนินงาน การเงิน","การผลิต การขาย การบัญชี","การวางแผน การจัดองค์กร การควบคุม","โลจิสติกส์ คลังสินค้า จัดซื้อ"],a:0,
+  w:"องค์กรขับเคลื่อนด้วย Marketing (สร้างอุปสงค์) Operations (สร้างสินค้า/บริการ) และ Finance (บริหารเงินทุน)"},
+ {q:"ผู้ริเริ่มแนวคิดการจัดการแบบวิทยาศาสตร์ (Scientific Management) คือใคร",
+  o:["Henry Ford","Elton Mayo","Frederick W. Taylor","W. Edwards Deming"],a:2,
+  w:"Taylor ศึกษาเวลาและการเคลื่อนไหวเพื่อหา The One Best Way ส่วน Ford = Mass Production, Mayo = Human Relations, Deming = Quality"},
+ {q:"โรงพยาบาลจัดเป็นการแปรรูปประเภทใดในระบบดำเนินงาน",
+  o:["ทางกายภาพ (Physical)","ด้านสถานที่ (Locational)","ด้านสารสนเทศ (Informational)","ทางสรีรวิทยา/จิตวิทยา"],a:3,
+  w:"โรงพยาบาลเปลี่ยนภาวะร่างกายของผู้รับบริการ จึงเป็นการแปรรูปทางสรีรวิทยา"},
+ {q:"ข้อใดเป็นลักษณะของ 'บริการ' ที่แตกต่างจาก 'สินค้า'",
+  o:["สามารถเก็บสำรองในคลังได้","ลูกค้ามีส่วนร่วมต่ำ","ผลิตและบริโภคพร้อมกัน ไม่สามารถเก็บสำรองได้","วัดคุณภาพได้ง่ายด้วยเกณฑ์ทางกายภาพ"],a:2,
+  w:"บริการมีลักษณะ Perishable ผลิตและบริโภคพร้อมกัน ลูกค้ามีส่วนร่วมสูง และคุณภาพเป็นอัตวิสัย"},
+ {q:"กระแสการไหลในโซ่อุปทานที่ OM ต้องบริหาร ประกอบด้วยข้อใด",
+  o:["วัตถุดิบ สารสนเทศ เงินทุน","แรงงาน เครื่องจักร วัตถุดิบ","อุปสงค์ อุปทาน ราคา","ต้นน้ำ กลางน้ำ ปลายน้ำ"],a:0,
+  w:"โซ่อุปทานมีการไหล 3 ด้าน: Material Flow, Information Flow และ Financial Flow"},
+ {q:"โรงงานผลิตชิ้นงานได้ 4,800 ชิ้น ใช้แรงงาน 64 ชั่วโมง ผลิตภาพแรงงานเท่ากับเท่าใด",
+  o:["55 ชิ้น/ชั่วโมง","65 ชิ้น/ชั่วโมง","75 ชิ้น/ชั่วโมง","85 ชิ้น/ชั่วโมง"],a:2,
+  w:"ผลิตภาพปัจจัยเดี่ยว = 4,800 ÷ 64 = 75 ชิ้นต่อชั่วโมงแรงงาน"},
+ {q:"กิจการมีต้นทุนคงที่ 100,000 บาท ราคาขาย 90 บาท/หน่วย ต้นทุนผันแปร 40 บาท/หน่วย จุดคุ้มทุนคือกี่หน่วย",
+  o:["1,111 หน่วย","2,000 หน่วย","2,500 หน่วย","4,000 หน่วย"],a:1,
+  w:"BEP = 100,000 ÷ (90 − 40) = 2,000 หน่วย"},
+ {q:"หลักการ ECRS ที่วิสาหกิจชุมชนทอผ้าไหมกาบบัวนำไปใช้ ย่อมาจากข้อใด",
+  o:["Evaluate-Control-Review-Standardize","Eliminate-Combine-Rearrange-Simplify","Efficiency-Cost-Reduction-System","Engage-Create-Refine-Sustain"],a:1,
+  w:"ECRS = ขจัด-รวม-จัดลำดับใหม่-ทำให้ง่าย เป็นเทคนิคลดความสูญเปล่าโดยไม่ต้องลงทุนเครื่องจักรราคาแพง"},
+ {q:"จุดเน้นสำคัญที่ Industry 5.0 เพิ่มเติมจาก Industry 4.0 คือข้อใด",
+  o:["การใช้ Big Data และ IoT","ระบบอัตโนมัติเต็มรูปแบบ","การยึดมนุษย์เป็นศูนย์กลาง ความยืดหยุ่น และความยั่งยืน","การผลิตมวลรวมต้นทุนต่ำ"],a:2,
+  w:"Industry 5.0 เพิ่มมิติ Human-centric, Resilience และ Sustainability ต่อยอดจากเทคโนโลยีดิจิทัลของยุค 4.0"}
+];
+function renderQuiz(){
+  document.getElementById('quizlist').innerHTML = QUIZ.map((it,i)=>`
+    <div class="q" id="q${i}">
+      <h4><span class="no">${i+1}.</span>${it.q}</h4>
+      ${it.o.map((op,j)=>`<label class="opt" data-j="${j}"><input type="radio" name="q${i}" value="${j}">${op}</label>`).join('')}
+      <div class="why">✅ เฉลย: ${it.o[it.a]}<br>${it.w}</div>
+    </div>`).join('');
+}
+function gradeQuiz(){
+  let sc=0;
+  QUIZ.forEach((it,i)=>{
+    const box=document.getElementById('q'+i);
+    box.classList.add('graded');
+    const pick=box.querySelector('input:checked');
+    box.querySelectorAll('.opt').forEach(l=>{
+      const j=+l.dataset.j;
+      l.classList.remove('correct','wrongpick');
+      if(j===it.a) l.classList.add('correct');
+      if(pick && +pick.value===j && j!==it.a) l.classList.add('wrongpick');
+    });
+    if(pick && +pick.value===it.a) sc++;
+  });
+  document.getElementById('score').innerText=sc;
+  document.getElementById('verdict').innerText = sc>=9?'ยอดเยี่ยม! เข้าใจเนื้อหาอย่างลึกซึ้ง':sc>=7?'ดีมาก ทบทวนเพิ่มเติมเล็กน้อยในข้อที่ผิด':sc>=5?'พอใช้ ควรกลับไปอ่านตำราซ้ำในหัวข้อที่ผิด':'ควรทบทวนเนื้อหาบทที่ 1 และเครื่องมือคำนวณอีกครั้ง';
+  document.getElementById('scorebox').classList.add('show');
+  document.getElementById('scorebox').scrollIntoView({behavior:'smooth'});
+}
+function resetQuiz(){
+  renderQuiz();
+  document.getElementById('scorebox').classList.remove('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+renderQuiz();
+</script>
 </body>
 </html>
