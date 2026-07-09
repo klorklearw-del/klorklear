@@ -117,8 +117,8 @@ table.tb tr:nth-child(even) td{background:var(--paper)}
 .tool p.d{font-size:.87rem;color:var(--muted);margin-bottom:1rem}
 .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.9rem;margin-bottom:1rem}
 .fields label{font-size:.8rem;font-weight:700;color:var(--ink);display:block;margin-bottom:.25rem}
-.fields input{width:100%;padding:.55rem .7rem;border:1.5px solid var(--line);border-radius:.55rem;font-family:'Sarabun';font-size:.95rem}
-.fields input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(14,143,131,.15)}
+.fields input,.fields select{width:100%;padding:.55rem .7rem;border:1.5px solid var(--line);border-radius:.55rem;font-family:'Sarabun';font-size:.95rem}
+.fields input:focus,.fields select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(14,143,131,.15)}
 .btn{background:var(--teal);color:#fff;border:none;font-family:'Prompt';font-weight:600;font-size:.9rem;padding:.6rem 1.4rem;border-radius:.6rem;cursor:pointer}
 .btn:hover{background:var(--navy)}
 .result{margin-top:1rem;background:var(--teal-soft);border:1px solid var(--teal);border-radius:.7rem;padding:1rem 1.2rem;display:none}
@@ -1302,10 +1302,13 @@ footer b{color:#fff}
 <section id="v-tools" class="view">
   <div class="toolwrap">
     <h2>🧮 เครื่องมือคำนวณปฏิสัมพันธ์</h2>
-    <p class="lead">ทดลองปรับค่าตัวแปรและสังเกตผลลัพธ์ เพื่อสร้างความเข้าใจเชิงปริมาณประกอบเนื้อหาแต่ละบท</p>
+    <p class="lead">ทดลองปรับค่าตัวแปรและสังเกตผลลัพธ์ เพื่อสร้างความเข้าใจเชิงปริมาณประกอบเนื้อหาแต่ละบท · คัดกรองเครื่องมือตามบทได้</p>
 
-    <div class="tool">
-      <h3>1) ผลิตภาพปัจจัยเดี่ยว <span class="bdg">บทที่ 1</span></h3>
+    <div class="quizfilter" id="toolfilter"></div>
+
+    <!-- ===================== บทที่ 1 ===================== -->
+    <div class="tool" data-ch="1">
+      <h3>1) ผลิตภาพปัจจัยเดี่ยว (Single-Factor Productivity) <span class="bdg">บทที่ 1</span></h3>
       <p class="d">Productivity = Output ÷ Input</p>
       <div class="fields">
         <div><label for="p-out">ผลผลิตรวมที่ได้ (Output)</label><input type="number" id="p-out" value="4800"></div>
@@ -1316,8 +1319,24 @@ footer b{color:#fff}
       <div class="result" id="p-res">ผลิตภาพที่คำนวณได้ = <span class="big" id="p-val">75.00</span> <small>หน่วยผลผลิตต่อหน่วยปัจจัยนำเข้า</small></div>
     </div>
 
-    <div class="tool">
-      <h3>2) การวิเคราะห์จุดคุ้มทุน (Break-Even Point) <span class="bdg">บทที่ 3</span></h3>
+    <div class="tool" data-ch="1">
+      <h3>2) ผลิตภาพหลายปัจจัย (Multifactor Productivity) <span class="bdg">บทที่ 1</span></h3>
+      <p class="d">MFP = มูลค่าผลผลิต ÷ (ต้นทุนแรงงาน + วัสดุ + ทุน + พลังงาน)</p>
+      <div class="fields">
+        <div><label for="m-out">มูลค่าผลผลิตรวม (บาท)</label><input type="number" id="m-out" value="500000"></div>
+        <div><label for="m-lab">ต้นทุนแรงงาน (บาท)</label><input type="number" id="m-lab" value="120000"></div>
+        <div><label for="m-mat">ต้นทุนวัสดุ (บาท)</label><input type="number" id="m-mat" value="180000"></div>
+        <div><label for="m-cap">ต้นทุนทุน (บาท)</label><input type="number" id="m-cap" value="40000"></div>
+        <div><label for="m-eng">ต้นทุนพลังงาน (บาท)</label><input type="number" id="m-eng" value="20000"></div>
+      </div>
+      <button class="btn" onclick="calcMFP()">คำนวณผลิตภาพหลายปัจจัย</button>
+      <div class="err" id="m-err">มูลค่าผลผลิตและผลรวมต้นทุนต้องเป็นบวก</div>
+      <div class="result" id="m-res">ผลิตภาพหลายปัจจัย = <span class="big" id="m-val">0</span> <small>บาทผลผลิตต่อบาทปัจจัยนำเข้า · ผลรวมต้นทุน = <b id="m-sum">0</b> บาท</small></div>
+    </div>
+
+    <!-- ===================== บทที่ 3 ===================== -->
+    <div class="tool" data-ch="3">
+      <h3>3) การวิเคราะห์จุดคุ้มทุน (Break-Even Point) <span class="bdg">บทที่ 3</span></h3>
       <p class="d">BEP = FC ÷ (P − V)</p>
       <div class="fields">
         <div><label for="b-fc">ต้นทุนคงที่รวม (บาท)</label><input type="number" id="b-fc" value="100000"></div>
@@ -1329,8 +1348,61 @@ footer b{color:#fff}
       <div class="result" id="b-res">ต้องจำหน่ายอย่างน้อย <span class="big" id="b-val">0</span> <small>หน่วย จึงจะคุ้มทุน (รายได้รวม = ต้นทุนรวม)</small></div>
     </div>
 
-    <div class="tool">
-      <h3>3) ปริมาณการสั่งซื้อที่ประหยัด (EOQ) <span class="bdg">บทที่ 7</span></h3>
+    <div class="tool" data-ch="3">
+      <h3>4) การเลือกกระบวนการ 2 ทางเลือก (จุดตัดต้นทุน) <span class="bdg">บทที่ 3</span></h3>
+      <p class="d">หาปริมาณ Q ที่ต้นทุนรวมของสองทางเลือกเท่ากัน: FC₁ + V₁Q = FC₂ + V₂Q</p>
+      <div class="fields">
+        <div><label for="x-fc1">ทางเลือก ก · ต้นทุนคงที่ (บาท)</label><input type="number" id="x-fc1" value="100000"></div>
+        <div><label for="x-v1">ทางเลือก ก · ผันแปร/หน่วย (บาท)</label><input type="number" id="x-v1" value="20"></div>
+        <div><label for="x-fc2">ทางเลือก ข · ต้นทุนคงที่ (บาท)</label><input type="number" id="x-fc2" value="160000"></div>
+        <div><label for="x-v2">ทางเลือก ข · ผันแปร/หน่วย (บาท)</label><input type="number" id="x-v2" value="12"></div>
+        <div><label for="x-q">ปริมาณที่คาดว่าจะผลิต Q (หน่วย)</label><input type="number" id="x-q" value="10000"></div>
+      </div>
+      <button class="btn" onclick="calcXover()">หาจุดตัดและทางเลือกที่คุ้มกว่า</button>
+      <div class="err" id="x-err">ต้นทุนผันแปรต่อหน่วยของสองทางเลือกต้องไม่เท่ากัน</div>
+      <div class="result" id="x-res">ปริมาณจุดตัด (Indifference Point) = <span class="big" id="x-val">0</span> <small>หน่วย · ที่ปริมาณ Q ที่กรอก ควรเลือก <b id="x-pick">-</b> (ต้นทุนรวมต่ำกว่า: ก = <b id="x-tc1">0</b> บาท, ข = <b id="x-tc2">0</b> บาท)</small></div>
+    </div>
+
+    <!-- ===================== บทที่ 4 ===================== -->
+    <div class="tool" data-ch="4">
+      <h3>5) การจัดสมดุลสายการผลิต (Line Balancing) <span class="bdg">บทที่ 4</span></h3>
+      <p class="d">Cycle Time = เวลาทำงานต่อวัน ÷ อุปสงค์ต่อวัน · สถานีขั้นต่ำ = Σเวลางาน ÷ CT · ประสิทธิภาพ = Σเวลางาน ÷ (สถานีจริง × CT)</p>
+      <div class="fields">
+        <div><label for="l-time">เวลาทำงานสุทธิต่อวัน (นาที)</label><input type="number" id="l-time" value="480"></div>
+        <div><label for="l-dem">อุปสงค์ต่อวัน (หน่วย)</label><input type="number" id="l-dem" value="480"></div>
+        <div><label for="l-sum">ผลรวมเวลางานทุกสถานีงาน (นาที/หน่วย)</label><input type="number" id="l-sum" value="4"></div>
+        <div><label for="l-act">จำนวนสถานีจริงที่จัดได้ (สถานี)</label><input type="number" id="l-act" value="4"></div>
+      </div>
+      <button class="btn" onclick="calcLine()">คำนวณสมดุลสายการผลิต</button>
+      <div class="err" id="l-err">ทุกค่าต้องเป็นตัวเลขบวก และอุปสงค์ต้องไม่เป็นศูนย์</div>
+      <div class="result" id="l-res">รอบเวลา (CT) = <span class="big" id="l-ct">0</span> <small>นาที/หน่วย · สถานีขั้นต่ำเชิงทฤษฎี = <b id="l-min">0</b> สถานี · ประสิทธิภาพสายการผลิต = <b id="l-eff">0</b>% · เวลาว่างงานต่อรอบ = <b id="l-idle">0</b> นาที</small></div>
+    </div>
+
+    <!-- ===================== บทที่ 6 ===================== -->
+    <div class="tool" data-ch="6">
+      <h3>6) การพยากรณ์และการวัดความคลาดเคลื่อน (Forecasting · MAD/MSE/MAPE) <span class="bdg">บทที่ 6</span></h3>
+      <p class="d">กรอกข้อมูลจริงในอดีตคั่นด้วยจุลภาค แล้วเลือกวิธีพยากรณ์ · ระบบจะพยากรณ์งวดถัดไปและวัดความคลาดเคลื่อนย้อนหลัง</p>
+      <div class="fields">
+        <div style="grid-column:1/-1"><label for="f-data">ข้อมูลอุปสงค์จริง (คั่นด้วย , )</label><input type="text" id="f-data" value="100, 110, 105, 120, 125, 130"></div>
+        <div>
+          <label for="f-method">วิธีพยากรณ์</label>
+          <select id="f-method">
+            <option value="ma">ค่าเฉลี่ยเคลื่อนที่ (Moving Average)</option>
+            <option value="es">ปรับเรียบเอกซ์โพเนนเชียล (Exponential Smoothing)</option>
+            <option value="lr">การถดถอยเชิงเส้น (Linear Regression)</option>
+          </select>
+        </div>
+        <div><label for="f-n">คาบ MA (n งวด) — ใช้กับ MA</label><input type="number" id="f-n" value="3"></div>
+        <div><label for="f-alpha">α สำหรับ ES (0–1)</label><input type="number" id="f-alpha" value="0.3" step="0.05"></div>
+      </div>
+      <button class="btn" onclick="calcForecast()">พยากรณ์และวัดความคลาดเคลื่อน</button>
+      <div class="err" id="f-err">ต้องมีข้อมูลอย่างน้อย 2 งวด และตั้งค่าพารามิเตอร์ให้ถูกต้อง (n ≥ 1, 0 &lt; α ≤ 1)</div>
+      <div class="result" id="f-res">ค่าพยากรณ์งวดถัดไป = <span class="big" id="f-next">0</span> <small>หน่วย · MAD = <b id="f-mad">0</b> · MSE = <b id="f-mse">0</b> · MAPE = <b id="f-mape">0</b>%</small></div>
+    </div>
+
+    <!-- ===================== บทที่ 7 ===================== -->
+    <div class="tool" data-ch="7">
+      <h3>7) ปริมาณการสั่งซื้อที่ประหยัด (EOQ) <span class="bdg">บทที่ 7</span></h3>
       <p class="d">EOQ = √(2DS ÷ H)</p>
       <div class="fields">
         <div><label for="e-d">ความต้องการต่อปี D (หน่วย)</label><input type="number" id="e-d" value="12000"></div>
@@ -1342,8 +1414,59 @@ footer b{color:#fff}
       <div class="result" id="e-res">EOQ = <span class="big" id="e-val">0</span> <small>หน่วยต่อครั้ง · จำนวนครั้งสั่งซื้อต่อปี ≈ <b id="e-n">0</b> ครั้ง · ต้นทุนรวมสั่งซื้อ+เก็บรักษา ≈ <b id="e-tc">0</b> บาท/ปี</small></div>
     </div>
 
-    <div class="tool">
-      <h3>4) ประสิทธิผลโดยรวมของเครื่องจักร (OEE) <span class="bdg">บทที่ 9</span></h3>
+    <div class="tool" data-ch="7">
+      <h3>8) จุดสั่งซื้อใหม่และสต็อกเพื่อความปลอดภัย (ROP · Safety Stock) <span class="bdg">บทที่ 7</span></h3>
+      <p class="d">SS = Z × σ<sub>d</sub> × √L · ROP = (d̄ × L) + SS</p>
+      <div class="fields">
+        <div><label for="r-d">อุปสงค์เฉลี่ยต่อวัน d̄ (หน่วย)</label><input type="number" id="r-d" value="50"></div>
+        <div><label for="r-l">ระยะเวลานำ Lead Time L (วัน)</label><input type="number" id="r-l" value="4"></div>
+        <div><label for="r-sd">ส่วนเบี่ยงเบนอุปสงค์ต่อวัน σ<sub>d</sub> (หน่วย)</label><input type="number" id="r-sd" value="8"></div>
+        <div>
+          <label for="r-z">ระดับการบริการ (Service Level)</label>
+          <select id="r-z">
+            <option value="1.28">90% (Z = 1.28)</option>
+            <option value="1.645" selected>95% (Z = 1.645)</option>
+            <option value="2.05">98% (Z = 2.05)</option>
+            <option value="2.33">99% (Z = 2.33)</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" onclick="calcROP()">คำนวณ ROP และ Safety Stock</button>
+      <div class="err" id="r-err">ทุกค่าต้องเป็นตัวเลขไม่ติดลบ และระยะเวลานำต้องเป็นบวก</div>
+      <div class="result" id="r-res">จุดสั่งซื้อใหม่ (ROP) = <span class="big" id="r-rop">0</span> <small>หน่วย · สต็อกเพื่อความปลอดภัย (SS) = <b id="r-ss">0</b> หน่วย · อุปสงค์ระหว่างช่วงนำ = <b id="r-dl">0</b> หน่วย</small></div>
+    </div>
+
+    <!-- ===================== บทที่ 8 ===================== -->
+    <div class="tool" data-ch="8">
+      <h3>9) แผนภูมิควบคุมสัดส่วนของเสีย (p-chart) <span class="bdg">บทที่ 8</span></h3>
+      <p class="d">p̄ = Σของเสีย ÷ (k×n) · UCL/LCL = p̄ ± 3√(p̄(1−p̄) ÷ n)</p>
+      <div class="fields">
+        <div><label for="pc-def">จำนวนของเสียรวมทุกกลุ่มตัวอย่าง (ชิ้น)</label><input type="number" id="pc-def" value="90"></div>
+        <div><label for="pc-n">ขนาดกลุ่มตัวอย่างต่อกลุ่ม n (ชิ้น)</label><input type="number" id="pc-n" value="200"></div>
+        <div><label for="pc-k">จำนวนกลุ่มตัวอย่าง k (กลุ่ม)</label><input type="number" id="pc-k" value="20"></div>
+      </div>
+      <button class="btn" onclick="calcPchart()">คำนวณเส้นควบคุม p-chart</button>
+      <div class="err" id="pc-err">ทุกค่าต้องเป็นบวก และจำนวนของเสียต้องไม่เกินจำนวนที่ตรวจทั้งหมด</div>
+      <div class="result" id="pc-res">สัดส่วนของเสียเฉลี่ย p̄ = <span class="big" id="pc-pbar">0</span> <small>· UCL = <b id="pc-ucl">0</b> · เส้นกลาง (CL) = <b id="pc-cl">0</b> · LCL = <b id="pc-lcl">0</b></small></div>
+    </div>
+
+    <div class="tool" data-ch="8">
+      <h3>10) ดัชนีความสามารถของกระบวนการ (Cp · Cpk) <span class="bdg">บทที่ 8</span></h3>
+      <p class="d">Cp = (USL − LSL) ÷ 6σ · Cpk = min[(USL − μ), (μ − LSL)] ÷ 3σ</p>
+      <div class="fields">
+        <div><label for="cp-usl">ขอบข้อกำหนดบน USL</label><input type="number" id="cp-usl" value="10.5"></div>
+        <div><label for="cp-lsl">ขอบข้อกำหนดล่าง LSL</label><input type="number" id="cp-lsl" value="9.5"></div>
+        <div><label for="cp-mu">ค่าเฉลี่ยกระบวนการ μ</label><input type="number" id="cp-mu" value="10.1"></div>
+        <div><label for="cp-sd">ส่วนเบี่ยงเบนมาตรฐาน σ</label><input type="number" id="cp-sd" value="0.12"></div>
+      </div>
+      <button class="btn" onclick="calcCpk()">คำนวณ Cp และ Cpk</button>
+      <div class="err" id="cp-err">USL ต้องมากกว่า LSL และ σ ต้องเป็นบวก</div>
+      <div class="result" id="cp-res">Cp = <span class="big" id="cp-cp">0</span> <small>· Cpk = <b id="cp-cpk">0</b> · <span id="cp-note"></span></small></div>
+    </div>
+
+    <!-- ===================== บทที่ 9 ===================== -->
+    <div class="tool" data-ch="9">
+      <h3>11) ประสิทธิผลโดยรวมของเครื่องจักร (OEE) <span class="bdg">บทที่ 9</span></h3>
       <p class="d">OEE = Availability × Performance × Quality</p>
       <div class="fields">
         <div><label for="o-a">อัตราเดินเครื่อง Availability (%)</label><input type="number" id="o-a" value="90"></div>
@@ -1354,6 +1477,20 @@ footer b{color:#fff}
       <div class="err" id="o-err">กรุณากรอกค่าร้อยละระหว่าง 0–100</div>
       <div class="result" id="o-res">OEE = <span class="big" id="o-val">0</span> <small id="o-note">%</small></div>
     </div>
+
+    <div class="tool" data-ch="9">
+      <h3>12) รอบเวลาลูกค้า (Takt Time) <span class="bdg">บทที่ 9</span></h3>
+      <p class="d">Takt Time = เวลาทำงานสุทธิที่มี ÷ อุปสงค์ของลูกค้า</p>
+      <div class="fields">
+        <div><label for="t-time">เวลาทำงานสุทธิที่มีต่อกะ (นาที)</label><input type="number" id="t-time" value="450"></div>
+        <div><label for="t-dem">อุปสงค์ลูกค้าต่อกะ (หน่วย)</label><input type="number" id="t-dem" value="180"></div>
+        <div><label for="t-ct">รอบเวลาปัจจุบันของสายการผลิต (นาที/หน่วย)</label><input type="number" id="t-ct" value="3"></div>
+      </div>
+      <button class="btn" onclick="calcTakt()">คำนวณ Takt Time</button>
+      <div class="err" id="t-err">ทุกค่าต้องเป็นบวก และอุปสงค์ต้องไม่เป็นศูนย์</div>
+      <div class="result" id="t-res">Takt Time = <span class="big" id="t-val">0</span> <small>นาที/หน่วย · <span id="t-note"></span></small></div>
+    </div>
+
   </div>
 </section>
 
@@ -1407,10 +1544,73 @@ document.getElementById('tocgrid').innerHTML=CHAPS.map(c=>
 function num(id){return parseFloat(document.getElementById(id).value)}
 function show(id,on){document.getElementById(id).classList.toggle('show',on)}
 function err(id,on){document.getElementById(id).style.display=on?'block':'none'}
+
+/* ---------- บทที่ 1 ---------- */
 function calcProd(){const o=num('p-out'),i=num('p-in');if(isNaN(o)||isNaN(i)||i===0){err('p-err',true);show('p-res',false);return}err('p-err',false);document.getElementById('p-val').innerText=(o/i).toFixed(2);show('p-res',true)}
+function calcMFP(){const o=num('m-out'),a=num('m-lab'),b=num('m-mat'),c=num('m-cap'),e=num('m-eng');const sum=a+b+c+e;if(!(o>0)||!(sum>0)||[a,b,c,e].some(isNaN)){err('m-err',true);show('m-res',false);return}err('m-err',false);document.getElementById('m-sum').innerText=sum.toLocaleString();document.getElementById('m-val').innerText=(o/sum).toFixed(3);show('m-res',true)}
+
+/* ---------- บทที่ 3 ---------- */
 function calcBEP(){const fc=num('b-fc'),p=num('b-p'),v=num('b-v');if(isNaN(fc)||isNaN(p)||isNaN(v)||p<=v){err('b-err',true);show('b-res',false);return}err('b-err',false);document.getElementById('b-val').innerText=Math.ceil(fc/(p-v)).toLocaleString();show('b-res',true)}
+function calcXover(){const f1=num('x-fc1'),v1=num('x-v1'),f2=num('x-fc2'),v2=num('x-v2'),q=num('x-q');if([f1,v1,f2,v2,q].some(isNaN)||v1===v2){err('x-err',true);show('x-res',false);return}err('x-err',false);const qp=(f2-f1)/(v1-v2);document.getElementById('x-val').innerText=Math.round(qp).toLocaleString();const tc1=f1+v1*q,tc2=f2+v2*q;document.getElementById('x-tc1').innerText=Math.round(tc1).toLocaleString();document.getElementById('x-tc2').innerText=Math.round(tc2).toLocaleString();document.getElementById('x-pick').innerText=tc1<tc2?'ทางเลือก ก':tc1>tc2?'ทางเลือก ข':'เท่ากันทั้งสองทาง';show('x-res',true)}
+
+/* ---------- บทที่ 4 ---------- */
+function calcLine(){const t=num('l-time'),d=num('l-dem'),s=num('l-sum'),a=num('l-act');if(!(t>0&&d>0&&s>0&&a>0)){err('l-err',true);show('l-res',false);return}err('l-err',false);const ct=t/d;const minSt=Math.ceil(s/ct);const eff=s/(a*ct)*100;const idle=a*ct-s;document.getElementById('l-ct').innerText=ct.toFixed(2);document.getElementById('l-min').innerText=minSt;document.getElementById('l-eff').innerText=eff.toFixed(1);document.getElementById('l-idle').innerText=idle.toFixed(2);show('l-res',true)}
+
+/* ---------- บทที่ 6 ---------- */
+function calcForecast(){
+  const raw=document.getElementById('f-data').value.split(',').map(x=>parseFloat(x.trim())).filter(x=>!isNaN(x));
+  const method=document.getElementById('f-method').value;
+  const n=parseInt(num('f-n')),alpha=num('f-alpha');
+  if(raw.length<2||(method==='ma'&&!(n>=1))||(method==='es'&&!(alpha>0&&alpha<=1))){err('f-err',true);show('f-res',false);return}
+  err('f-err',false);
+  const N=raw.length;let fc=new Array(N).fill(null);let next=null;
+  if(method==='ma'){
+    for(let i=n;i<N;i++){let s=0;for(let j=i-n;j<i;j++)s+=raw[j];fc[i]=s/n}
+    let s=0;for(let j=N-n;j<N;j++)s+=raw[j];next=s/Math.min(n,N);
+  }else if(method==='es'){
+    fc[0]=raw[0];for(let i=1;i<N;i++)fc[i]=fc[i-1]+alpha*(raw[i-1]-fc[i-1]);
+    next=fc[N-1]+alpha*(raw[N-1]-fc[N-1]);
+  }else{ // linear regression
+    let sx=0,sy=0,sxy=0,sxx=0;for(let i=0;i<N;i++){const x=i+1;sx+=x;sy+=raw[i];sxy+=x*raw[i];sxx+=x*x}
+    const b=(N*sxy-sx*sy)/(N*sxx-sx*sx);const a=(sy-b*sx)/N;
+    for(let i=0;i<N;i++)fc[i]=a+b*(i+1);next=a+b*(N+1);
+  }
+  let ae=0,se=0,ape=0,cnt=0;
+  for(let i=0;i<N;i++){if(fc[i]!=null&&raw[i]!==0){const e=Math.abs(raw[i]-fc[i]);ae+=e;se+=e*e;ape+=e/Math.abs(raw[i]);cnt++}}
+  document.getElementById('f-next').innerText=next.toFixed(1);
+  document.getElementById('f-mad').innerText=cnt?(ae/cnt).toFixed(2):'—';
+  document.getElementById('f-mse').innerText=cnt?(se/cnt).toFixed(2):'—';
+  document.getElementById('f-mape').innerText=cnt?(ape/cnt*100).toFixed(2):'—';
+  show('f-res',true);
+}
+
+/* ---------- บทที่ 7 ---------- */
 function calcEOQ(){const d=num('e-d'),s=num('e-s'),h=num('e-h');if(!(d>0&&s>0&&h>0)){err('e-err',true);show('e-res',false);return}err('e-err',false);const q=Math.sqrt(2*d*s/h);document.getElementById('e-val').innerText=Math.round(q).toLocaleString();document.getElementById('e-n').innerText=(d/q).toFixed(1);document.getElementById('e-tc').innerText=Math.round((d/q)*s+(q/2)*h).toLocaleString();show('e-res',true)}
+function calcROP(){const d=num('r-d'),l=num('r-l'),sd=num('r-sd'),z=num('r-z');if(!(d>=0&&l>0&&sd>=0)){err('r-err',true);show('r-res',false);return}err('r-err',false);const ss=z*sd*Math.sqrt(l);const dl=d*l;const rop=dl+ss;document.getElementById('r-ss').innerText=Math.round(ss).toLocaleString();document.getElementById('r-dl').innerText=Math.round(dl).toLocaleString();document.getElementById('r-rop').innerText=Math.round(rop).toLocaleString();show('r-res',true)}
+
+/* ---------- บทที่ 8 ---------- */
+function calcPchart(){const def=num('pc-def'),n=num('pc-n'),k=num('pc-k');if(!(def>=0&&n>0&&k>0)||def>n*k){err('pc-err',true);show('pc-res',false);return}err('pc-err',false);const pbar=def/(n*k);const sd=Math.sqrt(pbar*(1-pbar)/n);const ucl=pbar+3*sd,lcl=Math.max(0,pbar-3*sd);document.getElementById('pc-pbar').innerText=pbar.toFixed(4);document.getElementById('pc-cl').innerText=pbar.toFixed(4);document.getElementById('pc-ucl').innerText=ucl.toFixed(4);document.getElementById('pc-lcl').innerText=lcl.toFixed(4);show('pc-res',true)}
+function calcCpk(){const usl=num('cp-usl'),lsl=num('cp-lsl'),mu=num('cp-mu'),sd=num('cp-sd');if(!(usl>lsl)||!(sd>0)||isNaN(mu)){err('cp-err',true);show('cp-res',false);return}err('cp-err',false);const cp=(usl-lsl)/(6*sd);const cpk=Math.min(usl-mu,mu-lsl)/(3*sd);document.getElementById('cp-cp').innerText=cp.toFixed(2);document.getElementById('cp-cpk').innerText=cpk.toFixed(2);document.getElementById('cp-note').innerText=cpk>=1.33?'กระบวนการมีความสามารถเพียงพอ (Cpk ≥ 1.33)':cpk>=1.0?'ยอมรับได้แต่ควรปรับปรุง (1.0 ≤ Cpk < 1.33)':'ไม่เพียงพอ ควรปรับปรุงกระบวนการ (Cpk < 1.0)';show('cp-res',true)}
+
+/* ---------- บทที่ 9 ---------- */
 function calcOEE(){const a=num('o-a'),p=num('o-p'),q=num('o-q');const ok=v=>!isNaN(v)&&v>=0&&v<=100;if(!(ok(a)&&ok(p)&&ok(q))){err('o-err',true);show('o-res',false);return}err('o-err',false);const oee=(a/100)*(p/100)*(q/100)*100;document.getElementById('o-val').innerText=oee.toFixed(2);document.getElementById('o-note').innerText='% '+(oee>=85?'· ระดับ World Class (≥85%)':oee>=60?'· ระดับปานกลาง ควรปรับปรุงต่อเนื่อง':'· ต่ำกว่าเกณฑ์ ควรวิเคราะห์ความสูญเสียหลัก 6 ประการ');show('o-res',true)}
+function calcTakt(){const t=num('t-time'),d=num('t-dem'),ct=num('t-ct');if(!(t>0&&d>0)||isNaN(ct)){err('t-err',true);show('t-res',false);return}err('t-err',false);const takt=t/d;document.getElementById('t-val').innerText=takt.toFixed(2);let note;if(ct>takt)note='รอบเวลาปัจจุบัน ('+ct+') ช้ากว่า Takt — สายการผลิตผลิตไม่ทันอุปสงค์ ควรปรับปรุง';else if(ct<takt)note='รอบเวลาปัจจุบัน ('+ct+') เร็วกว่า Takt — มีกำลังการผลิตเหลือ';else note='รอบเวลาปัจจุบันสอดคล้องกับ Takt พอดี';document.getElementById('t-note').innerText=note;show('t-res',true)}
+
+/* ---------- ตัวกรองเครื่องมือรายบท ---------- */
+let toolFilter='all';
+function buildToolFilter(){
+  const chs=[...new Set([...document.querySelectorAll('#v-tools .tool')].map(t=>+t.dataset.ch))].sort((a,b)=>a-b);
+  const btns=['<button class="on" data-f="all" onclick="setToolFilter(\'all\')">ทุกบท</button>']
+    .concat(chs.map(c=>`<button data-f="${c}" onclick="setToolFilter('${c}')">บทที่ ${c}</button>`));
+  document.getElementById('toolfilter').innerHTML=btns.join('');
+}
+function setToolFilter(f){
+  toolFilter=f;
+  document.querySelectorAll('#toolfilter button').forEach(b=>b.classList.toggle('on',b.dataset.f==f));
+  document.querySelectorAll('#v-tools .tool').forEach(t=>{t.style.display=(f==='all'||t.dataset.ch==f)?'':'none'});
+}
+buildToolFilter();
+
 
 const QUIZ=[
  // ---------- บทที่ 1 ----------
